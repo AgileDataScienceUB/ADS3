@@ -5,10 +5,14 @@ import re
 
 class Source1Recipe():
     def __init__(self, ID, PageContent):
+        # HTML content
         self._page_content = PageContent
+
+        # Pre compiling used Regexs.
         self.image_address_regex = re.compile(r'(.*)\?', re.IGNORECASE)
         self.price_regex = re.compile(r"price:\s*<strong>(.*)</strong>", re.IGNORECASE | re.MULTILINE)
 
+        # Data Dictionary
         self._data = {
             'id':ID,
             'url': SOURCE1['recipes']+ID,
@@ -27,6 +31,7 @@ class Source1Recipe():
         self._process_content()
 
     def _process_content(self):
+        # Processing HTML structure for data
         selector = Selector(text=self._page_content)
         self._data['image'] = selector.xpath('//div[@class="article--image"]//picture/source/@srcset').re(self.image_address_regex)[0]
         self._data['name'] = selector.xpath('//h1[@itemprop="name"]/text()').extract()[0]
@@ -43,4 +48,5 @@ class Source1Recipe():
 
 
     def return_json(self):
+        # Returning Data in JSON format
         return json.dumps(self._data)
