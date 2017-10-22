@@ -5,13 +5,12 @@ NEWSPIDER_MODULE = 'FoodBot.spiders'
 
 USER_AGENT = 'FoodBot'
 
-RECIPES_DIRECTORY = 'recipes/'
-
 ROBOTSTXT_OBEY = True
 
 SOURCE1 = {
     'url':'https://www.asdagoodliving.co.uk/',
-    'recipes':'https://www.asdagoodliving.co.uk/food/recipes/'
+    'recipes':'https://www.asdagoodliving.co.uk/food/recipes/',
+    'directory':'recipes/source1/'
 }
 
 CONCURRENT_REQUESTS = 16
