@@ -5,6 +5,8 @@ NEWSPIDER_MODULE = 'FoodBot.spiders'
 
 USER_AGENT = 'FoodBot'
 
+RECIPES_DIRECTORY = 'recipes/'
+
 ROBOTSTXT_OBEY = True
 
 SOURCE1 = {
