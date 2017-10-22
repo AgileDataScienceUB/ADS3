@@ -1,6 +1,5 @@
 import scrapy
 from FoodBot.settings import SOURCE1
-from time import sleep
 from scrapy import Request
 from FoodBot.items import Source1Recipe
 import re
@@ -30,6 +29,13 @@ class AsdagoodlivingSpider(scrapy.Spider):
     def parse_recipe(self, response):
         id = re.search(self.id_regex, response.url).group(1)
         recipe = Source1Recipe(id, response.body)
-        f = open('')
-        print(recipe.return_json())
-        print('\n\n')
+        self.save_recipe(id, recipe.return_json())
+
+    def save_recipe(self, id, jsonString):
+        try:
+            f = open(SOURCE1['directory']+id, 'w')
+            f.write(jsonString)
+            f.close()
+            return True
+        except Exception as e:
+            raise e
