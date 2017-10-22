@@ -7,11 +7,10 @@ USER_AGENT = 'FoodBot'
 
 ROBOTSTXT_OBEY = True
 
-SOURCE_URL = 'https://www.asdagoodliving.co.uk/'
-
-# {number} starts from 0 to and grows by a factor of 12
-# i.e. 0 - 12 - 24 - 36 - etc.
-RECIPES_URL = SOURCE_URL+'food/recipes/'
+SOURCE1 = {
+    'url':'https://www.asdagoodliving.co.uk/',
+    'recipes':'https://www.asdagoodliving.co.uk/food/recipes/'
+}
 
 CONCURRENT_REQUESTS = 16
 
