@@ -3,6 +3,7 @@ from FoodBot.settings import SOURCE1
 from scrapy import Request
 from FoodBot.items import Source1Recipe
 import re
+import os.path as osp
 
 class AsdagoodlivingSpider(scrapy.Spider):
     name = 'asdagoodliving'
@@ -29,7 +30,8 @@ class AsdagoodlivingSpider(scrapy.Spider):
     def parse_recipe(self, response):
         id = re.search(self.id_regex, response.url).group(1)
         recipe = Source1Recipe(id, response.body)
-        self.save_recipe(id, recipe.return_json())
+        if not self.check_recipe(id):
+            self.save_recipe(id, recipe.return_json())
 
     def save_recipe(self, id, jsonString):
         try:
@@ -39,3 +41,8 @@ class AsdagoodlivingSpider(scrapy.Spider):
             return True
         except Exception as e:
             raise e
+
+    def check_recipe(self, id):
+        if osp.isfile(SOURCE1['directory']+id):
+            return True
+        return False
