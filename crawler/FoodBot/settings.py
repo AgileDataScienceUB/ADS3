@@ -13,5 +13,7 @@ SOURCE1 = {
     'directory': 'recipes/source1/'
 }
 
+DATA_DIRECTORY = 'data/'
+
 CONCURRENT_REQUESTS = 16
 
