@@ -1,9 +1,13 @@
 import scrapy
-from FoodBot.settings import SOURCE1
+from FoodBot.settings import SOURCE1, DATA_DIRECTORY
 from scrapy import Request
 from FoodBot.items import Source1Recipe
 import re
-import os.path as osp
+from os import listdir
+from os.path import isfile, join
+import pandas as pd
+import json
+import numpy as np
 
 class AsdagoodlivingSpider(scrapy.Spider):
     name = 'asdagoodliving'
@@ -54,6 +58,37 @@ class AsdagoodlivingSpider(scrapy.Spider):
 
     def check_recipe(self, id):
         # checking if recipe exists
-        if osp.isfile(SOURCE1['directory']+id):
+        if isfile(SOURCE1['directory']+id):
             return True
         return False
+
+    def closed(self, reason):
+        # Convert gathered data into a CSV file after crawler stopped crawling
+        # Creating Pandas Data Frame
+        recipes_columns = ['id', 'url', 'image', 'name', 'time', 'serves', 'price', 'energy', 'fat', 'saturated_fat', 'sugar', 'salt']
+        recipes = pd.DataFrame(columns=recipes_columns)
+        ingredients_columns = ['id', 'ingredient']
+        ingredients = pd.DataFrame(columns=ingredients_columns)
+
+        # Iterating through saved recipes
+        for file in self.recipe_file_names():
+            # Reading file
+            f = open(SOURCE1['directory']+file, 'r')
+            jo = json.loads(f.read())
+            f.close()
+
+            recipe = [jo['id'], jo['url'], jo['image'], jo['name'], jo['time'], jo['serves'], jo['price'], jo['energy'], jo['fat'], jo['saturated_fat'], jo['sugar'], jo['salt']]
+            recipes.loc[recipes.shape[0]+1] = recipe
+
+            for ing in jo['ingredients']:
+                ingredients.loc[ingredients.shape[0]+1] = [jo['id'], ing]
+
+        # Saving into CSV file
+        recipes.to_csv(DATA_DIRECTORY+'Source1Recipes.csv', index=False)
+        ingredients.to_csv(DATA_DIRECTORY+'Source1Ingredients.csv', index=False)
+
+    def recipe_file_names(self):
+        # Returns recipes fine names
+        for f in listdir(SOURCE1['directory']):
+            if isfile(join(SOURCE1['directory'], f)) and f != '.nothing':
+                yield f
