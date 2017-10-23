@@ -43,7 +43,7 @@ class Source1Recipe():
         self._data['serves'] = serves[0].strip() if serves else ''
         price = selector.xpath('//div[contains(@class,"article__lhs--recipe-info")]').re(self.price_regex)
         self._data['price'] = price[0].strip() if price else ''
-        nutrition_ul = selector.xpath('//div[@itemprop="nutrition"]/ul').strip()
+        nutrition_ul = selector.xpath('//div[@itemprop="nutrition"]/ul')
         energy = selector.xpath('//span[@itemprop="calories"]/em/text()').extract()
         self._data['energy'] = energy[0].strip() if energy else ''
         fat = selector.xpath('//meta[@itemprop="fatContent"]/@content').extract()
