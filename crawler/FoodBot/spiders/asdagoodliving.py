@@ -7,7 +7,7 @@ from os import listdir
 from os.path import isfile, join
 import pandas as pd
 import json
-import numpy as np
+from logging import info, debug
 
 class AsdagoodlivingSpider(scrapy.Spider):
     name = 'asdagoodliving'
@@ -44,7 +44,10 @@ class AsdagoodlivingSpider(scrapy.Spider):
 
         # saving recipe to file
         if not self.check_recipe(id):
+            info('Saving recipe: "{id}"'.format(id=id))
             self.save_recipe(id, recipe.return_json())
+        else:
+            debug('Recipe already exists: "{id}"'.format(id=id))
 
     def save_recipe(self, id, jsonString):
         # Saving recipe to file
@@ -84,8 +87,13 @@ class AsdagoodlivingSpider(scrapy.Spider):
                 ingredients.loc[ingredients.shape[0]+1] = [jo['id'], ing]
 
         # Saving into CSV file
-        recipes.to_csv(DATA_DIRECTORY+'Source1Recipes.csv', index=False)
-        ingredients.to_csv(DATA_DIRECTORY+'Source1Ingredients.csv', index=False)
+        try:
+            info('Saving data into CSV files. Please Wait ...')
+            recipes.to_csv(DATA_DIRECTORY+'Source1Recipes.csv', index=False)
+            ingredients.to_csv(DATA_DIRECTORY+'Source1Ingredients.csv', index=False)
+        except Exception as e:
+            raise e
+        info('Saving Successful! Access data in data directory.')
 
     def recipe_file_names(self):
         # Returns recipes fine names
