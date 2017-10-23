@@ -19,6 +19,7 @@ class AsdagoodlivingSpider(scrapy.Spider):
 
     def start_requests(self):
         # Start location fort spider
+        info('Crawler initiated.')
         yield Request(url=SOURCE1['recipes'], callback=self.parse_recipes)
 
     def parse_recipes(self, response):
@@ -68,6 +69,7 @@ class AsdagoodlivingSpider(scrapy.Spider):
     def closed(self, reason):
         # Convert gathered data into a CSV file after crawler stopped crawling
         # Creating Pandas Data Frame
+        info('Saving data into CSV files. Please Wait ...')
         recipes_columns = ['id', 'url', 'image', 'name', 'time', 'serves', 'price', 'energy', 'fat', 'saturated_fat', 'sugar', 'salt']
         recipes = pd.DataFrame(columns=recipes_columns)
         ingredients_columns = ['id', 'ingredient']
@@ -88,7 +90,6 @@ class AsdagoodlivingSpider(scrapy.Spider):
 
         # Saving into CSV file
         try:
-            info('Saving data into CSV files. Please Wait ...')
             recipes.to_csv(DATA_DIRECTORY+'Source1Recipes.csv', index=False)
             ingredients.to_csv(DATA_DIRECTORY+'Source1Ingredients.csv', index=False)
         except Exception as e:
