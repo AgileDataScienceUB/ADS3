@@ -54,7 +54,7 @@ class Source1Recipe():
         self._data['sugar'] = sugar[0].strip() if sugar else ''
         salt = nutrition_ul.xpath('//li[5]/span/em/text()').extract()
         self._data['salt'] = salt[0].strip() if salt else ''
-        self._data['ingredients'] = selector.xpath('//span[@itemprop="ingredients"]/text()').extract().strip()
+        self._data['ingredients'] = selector.xpath('//span[@itemprop="ingredients"]/text()').extract()
 
     def return_json(self):
         # Returning Data in JSON format
