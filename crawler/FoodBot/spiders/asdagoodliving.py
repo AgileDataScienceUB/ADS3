@@ -18,7 +18,6 @@ class AsdagoodlivingSpider(scrapy.Spider):
         yield Request(url=SOURCE1['recipes'], callback=self.parse_recipes)
 
     def parse_recipes(self, response):
-
         # Extracting recipe links for spider to follow
         recipes = response.selector.xpath('//div[@id="results"]//div[@class="index__item--content"]/a/@href').re(self.id_regex)
         for recipe in recipes:
