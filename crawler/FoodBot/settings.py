@@ -13,6 +13,12 @@ SOURCE1 = {
     'directory': 'recipes/source1/'
 }
 
+SOURCE2 = {
+    'url': 'http://allrecipes.com/',
+    'recipes': 'https://www.asdagoodliving.co.uk/food/recipes/',
+    'directory': 'recipes/source2/'
+}
+
 DATA_DIRECTORY = 'data/'
 
 LOG_LEVEL = 'INFO'
