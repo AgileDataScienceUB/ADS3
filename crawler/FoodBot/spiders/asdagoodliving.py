@@ -90,8 +90,8 @@ class AsdagoodlivingSpider(scrapy.Spider):
 
         # Saving into CSV file
         try:
-            recipes.to_csv(DATA_DIRECTORY+'Source1Recipes.csv', index=False)
-            ingredients.to_csv(DATA_DIRECTORY+'Source1Ingredients.csv', index=False)
+            recipes.to_csv(DATA_DIRECTORY+'Source1Recipes.csv', index=False, encoding='utf-8')
+            ingredients.to_csv(DATA_DIRECTORY+'Source1Ingredients.csv', index=False, encoding='utf-8')
         except Exception as e:
             raise e
         info('Saving Successful! Access data in data directory.')
