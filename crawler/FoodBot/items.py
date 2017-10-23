@@ -33,19 +33,28 @@ class Source1Recipe():
     def _process_content(self):
         # Processing HTML structure for data
         selector = Selector(text=self._page_content)
-        self._data['image'] = selector.xpath('//div[@class="article--image"]//picture/source/@srcset').re(self.image_address_regex)[0]
-        self._data['name'] = selector.xpath('//h1[@itemprop="name"]/text()').extract()[0]
-        self._data['time'] = selector.xpath('//strong[@itemprop="totalTime"]/text()').extract()[0]
-        self._data['serves'] = selector.xpath('//strong[@itemprop="recipeYield"]/text()').extract()[0]
-        self._data['price'] = selector.xpath('//div[contains(@class,"article__lhs--recipe-info")]').re(self.price_regex)[0]
-        nutrition_ul = selector.xpath('//div[@itemprop="nutrition"]/ul')
-        self._data['energy'] = selector.xpath('//span[@itemprop="calories"]/em/text()').extract()[0]
-        self._data['fat'] = selector.xpath('//meta[@itemprop="fatContent"]/@content').extract()[0]
-        self._data['saturated_fat'] = selector.xpath('//meta[@itemprop="saturatedFatContent"]/@content').extract()[0]
-        self._data['sugar'] = selector.xpath('//meta[@itemprop="sugarContent"]/@content').extract()[0]
-        self._data['salt'] = nutrition_ul.xpath('//li[5]/span/em/text()').extract()[0]
-        self._data['ingredients'] = selector.xpath('//span[@itemprop="ingredients"]/text()').extract()
-
+        image = selector.xpath('//div[@class="article--image"]//picture/source/@srcset').re(self.image_address_regex)
+        self._data['image'] = image[0].strip() if image else ''
+        name = selector.xpath('//h1[@itemprop="name"]/text()').extract()
+        self._data['name'] = name[0].strip() if name else ''
+        time = selector.xpath('//strong[@itemprop="totalTime"]/text()').extract()
+        self._data['time'] = time[0].strip() if time else ''
+        serves = selector.xpath('//strong[@itemprop="recipeYield"]/text()').extract()
+        self._data['serves'] = serves[0].strip() if serves else ''
+        price = selector.xpath('//div[contains(@class,"article__lhs--recipe-info")]').re(self.price_regex)
+        self._data['price'] = price[0].strip() if price else ''
+        nutrition_ul = selector.xpath('//div[@itemprop="nutrition"]/ul').strip()
+        energy = selector.xpath('//span[@itemprop="calories"]/em/text()').extract()
+        self._data['energy'] = energy[0].strip() if energy else ''
+        fat = selector.xpath('//meta[@itemprop="fatContent"]/@content').extract()
+        self._data['fat'] = fat[0].strip() if fat else ''
+        saturated_fat = selector.xpath('//meta[@itemprop="saturatedFatContent"]/@content').extract()
+        self._data['saturated_fat'] = saturated_fat[0].strip()
+        sugar = selector.xpath('//meta[@itemprop="sugarContent"]/@content').extract()
+        self._data['sugar'] = sugar[0].strip() if sugar else ''
+        salt = nutrition_ul.xpath('//li[5]/span/em/text()').extract()
+        self._data['salt'] = salt[0].strip() if salt else ''
+        self._data['ingredients'] = selector.xpath('//span[@itemprop="ingredients"]/text()').extract().strip()
 
     def return_json(self):
         # Returning Data in JSON format
