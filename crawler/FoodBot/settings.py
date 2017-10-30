@@ -15,7 +15,7 @@ SOURCE1 = {
 
 SOURCE2 = {
     'url': 'http://allrecipes.com/',
-    'recipes': 'https://www.asdagoodliving.co.uk/food/recipes/',
+    'recipes': ['http://allrecipes.com/recipedetail.xml.gz', 'http://allrecipes.com/recipedetail1.xml.gz', 'http://allrecipes.com/recipedetail2.xml.gz'],
     'directory': 'recipes/source2/'
 }
 
