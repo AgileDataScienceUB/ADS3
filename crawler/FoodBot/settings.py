@@ -15,7 +15,7 @@ SOURCE1 = {
 
 SOURCE2 = {
     'url': 'http://www.seriouseats.com/',
-    'recipes': 'http://www.seriouseats.com/topics/search?index=recipe&count=10&only=id,tags,ingredients,title,thumbnail_1500,active_time,permalink,total_time,number_serves',
+    'recipes': 'http://www.seriouseats.com/topics/search?index=recipe&count=999999&only=id,tags,ingredients,title,thumbnail_1500,active_time,permalink,total_time,number_serves',
     'directory': 'recipes/source2/'
 }
 
