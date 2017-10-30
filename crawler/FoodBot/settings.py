@@ -14,8 +14,8 @@ SOURCE1 = {
 }
 
 SOURCE2 = {
-    'url': 'http://allrecipes.com/',
-    'recipes': ['http://allrecipes.com/recipedetail.xml.gz', 'http://allrecipes.com/recipedetail1.xml.gz', 'http://allrecipes.com/recipedetail2.xml.gz'],
+    'url': 'http://www.seriouseats.com/',
+    'recipes': 'http://www.seriouseats.com/topics/search?index=recipe&count=999999&only=id',
     'directory': 'recipes/source2/'
 }
 
