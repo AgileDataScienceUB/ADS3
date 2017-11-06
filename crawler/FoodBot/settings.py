@@ -3,7 +3,7 @@ BOT_NAME = 'FoodBot'
 SPIDER_MODULES = ['FoodBot.spiders']
 NEWSPIDER_MODULE = 'FoodBot.spiders'
 
-USER_AGENT = 'FoodBot'
+USER_AGENT = 'FoodBot (Student project at https://github.com/AgileDataScienceUB)'
 
 ROBOTSTXT_OBEY = True
 
