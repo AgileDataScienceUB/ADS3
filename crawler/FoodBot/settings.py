@@ -3,7 +3,7 @@ BOT_NAME = 'FoodBot'
 SPIDER_MODULES = ['FoodBot.spiders']
 NEWSPIDER_MODULE = 'FoodBot.spiders'
 
-USER_AGENT = 'FoodBot'
+USER_AGENT = 'FoodBot (Student project at https://github.com/AgileDataScienceUB)'
 
 ROBOTSTXT_OBEY = True
 
@@ -14,8 +14,8 @@ SOURCE1 = {
 }
 
 SOURCE2 = {
-    'url': 'http://allrecipes.com/',
-    'recipes': 'https://www.asdagoodliving.co.uk/food/recipes/',
+    'url': 'http://www.seriouseats.com/',
+    'recipes': 'http://www.seriouseats.com/topics/search?index=recipe&count=999999&only=id,tags,ingredients,title,thumbnail_625,active_time,permalink,total_time,number_serves',
     'directory': 'recipes/source2/'
 }
 
