@@ -1,16 +1,20 @@
 from flask import Flask
 from flask import request
 import json
+from flask_cors import CORS, cross_origin
 from .config import MONGO_DB_URI, DB
 import random as rd
 
 app = Flask(__name__)
+cors = CORS(app)
 
 @app.route('/')
+@cross_origin()
 def main_page():
   return 'Initial API root'
 
 @app.route('/ingredients', methods=['POST'])
+@cross_origin()
 def get_ingredients():
     """Receiving {"query":"[characters]"}"""
     jsonObj = json.loads(request.get_data())
@@ -26,9 +30,10 @@ def get_ingredients():
     ingredients = ['Eggs1', 'Eggs3', 'Eggs2', 'Flour', 'Oil', 'Banana', 'Apple', 'Sugar', 'Bread', 'Oranges'] # TODO: Load complete list of ingredient
     ingredients = [x for x in ingredients if str(x).lower().find(query) > -1]
 
-    return json.dumps({"ingredienrts": ingredients})
+    return json.dumps({"ingredients": ingredients})
 
 @app.route('/recipes', methods=['post'])
+@cross_origin()
 def get_recipes():
     """Receiving {"ingredients":[list], "count":[int]}"""
 
