@@ -1,10 +1,11 @@
 (function($){
     $(document).ready(function () {
 
+        var API_URL = 'http://0.0.0.0:5001/';
+
         function capitalizeFirstLetter(string) {
             return string.charAt(0).toUpperCase() + string.slice(1);
         }
-
         function activateLoading() {
             $(".loading").removeClass("hide-container")
         }
@@ -19,6 +20,53 @@
         }
         function loadMoreRecipes() {
             $(".load-more .btn").html('<i class=\"fa fa-cog fa-spin fa-fw\" aria-hidden=\"true\"></i> Loading Data').attr("disabled","disabled");
+            $.ajax({
+                url: API_URL+'recipes',
+                data:JSON.stringify({"ingredients":$("#taglist").tagsinput('items')}),
+                error: function() {
+                    alert("AJAX error");
+                },
+                dataType: 'json',
+                success: function(data) {
+                    $.each(data['recipes'],function (idx) {
+                        var item = data["recipes"][idx];
+                        var html = '<div class="col-lg-3 col-md-4 col-sm-6 recipe-container"><a href="#'+item["id"]+'"><div style="background: url('+item["image"]+') no-repeat center center; background-size: cover;"><div><h4 class="text-center">'+item['title']+'</h4></div></div></a></div>';
+                        $(".recipes").append(html);
+                    })
+                },
+                type: 'POST'
+            }).done(function () {
+                $(".load-more .btn").html('Load More Recipes').removeAttr("disabled");
+            });
+        }
+        function loadRecips() {
+            ingredients = $("#taglist").tagsinput('items');
+            if(ingredients.length < 1){
+                hideRecipes();
+                return false;
+            }
+            activateLoading();
+            hideRecipes();
+            $(".recipes").html("");
+            $.ajax({
+                url: API_URL+'recipes',
+                data:JSON.stringify({"ingredients":$("#taglist").tagsinput('items')}),
+                error: function() {
+                    alert("AJAX error");
+                },
+                dataType: 'json',
+                success: function(data) {
+                    $.each(data['recipes'],function (idx) {
+                        var item = data["recipes"][idx];
+                        var html = '<div class="col-lg-3 col-md-4 col-sm-6 recipe-container"><a href="#'+item["id"]+'"><div style="background: url('+item["image"]+') no-repeat center center; background-size: cover;"><div><h4 class="text-center">'+item['title']+'</h4></div></div></a></div>';
+                        $(".recipes").append(html);
+                    })
+                },
+                type: 'POST'
+            }).done(function () {
+                deactivateLoading();
+                showRecipes();
+            });
         }
 
         var substringMatcher = function(strs) {
@@ -35,7 +83,7 @@
                 // contains the substring `q`, add it to the `matches` array
                 $.each(strs, function(i, str) {
                     if (substrRegex.test(str)) {
-                        matches.push(str);
+                        matches.push(capitalizeFirstLetter(str));
                     }
                 });
 
@@ -43,12 +91,13 @@
             };
         };
 
-        var states = ['Eggs', 'Flour', 'Oil', 'Banana', 'Apple', 'Sugar', 'Bread', 'Oranges'];
+        var states = ['Eggs', 'Flour', 'Oil', 'Banana', 'Apple', 'Sugar', 'Bread', 'Oranges', 'lemon', 'chicken', 'vanilla', 'thyme', 'salmon', 'cashew', 'mangos', 'salt', 'pepper', 'olive', 'garlic', 'milk', 'Cream', 'tomatoe', 'rice', 'ginger', 'honey', 'corn', 'basil', 'mint', 'bacon', 'carrot'];
 
+        // TODO: find a better autocomplete plugin compatible with ajax
         $('#typeahead').typeahead({
                 hint: true,
                 highlight: true,
-                minLength: 2
+                minLength: 1
             },
             {
                 name: 'states',
@@ -72,12 +121,10 @@
         });
 
         $('#taglist').on('itemAdded', function(event) {
-            activateLoading()
-            hideRecipes()
+            loadRecips()
         });
         $('#taglist').on('itemRemoved', function(event) {
-            deactivateLoading()
-            showRecipes()
+            loadRecips()
         });
         $(".load-more").click(function(){
             loadMoreRecipes()
