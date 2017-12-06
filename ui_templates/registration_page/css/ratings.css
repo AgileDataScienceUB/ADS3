@@ -1,0 +1,72 @@
+/* CUSTOMIZE THE CAROUSEL
+-------------------------------------------------- */
+.container {
+  padding-top: 85px;
+}
+
+.starrr {
+  padding-top: 10px;
+}
+
+.glyphicon {
+  font-size: 30px;
+}
+
+.carousel-control {
+  top: 50px;
+}
+
+.carousel-caption
+      {
+        position: absolute;
+        right: 0;
+        top: 0;
+        left: 0;
+        bottom: 249px;
+        z-index: 10;
+        padding-top: 20px;
+        padding-bottom: 20px;
+        color: #fff;
+        text-align: center;
+        background: rgba(0,0,0,0.4);
+      }
+
+.ratings-heading {padding-bottom: 40px;}
+
+/* Carousel base class */
+.carousel {
+  margin-bottom: 60px;
+}
+/* Since positioning the image, we need to help out the caption */
+.carousel-caption {
+  z-index: 10;
+}
+
+/* Declare heights because of positioning of img element */
+.carousel .item {
+  height: 400px;
+  background-color:#bbb;
+}
+.carousel img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  min-width: 100%;
+}
+
+.carousel-buttons {
+  width: 100%;
+  color:#666;
+  bottom:1px;
+}
+.carousel-buttons > div {
+  padding:10px;
+  border:1px solid #666;
+}
+.carousel-buttons a {
+  color:#666;
+  display:block;
+  line-height:30px;
+}
+
+
