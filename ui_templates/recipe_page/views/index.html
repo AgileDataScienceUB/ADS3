@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head> 
+    <title>Recipe page</title>
+    <meta charset="utf-8">
+    <!-- Standard Coder Includes -->
+    <script>
+        var appname = "{{app_name}}"; //app name (id) of this app
+        var appurl = "{{&app_url}}";
+        var staticurl = "{{&static_url}}"; //base path to your static files /static/apps/yourapp
+    </script>
+    <link href="/static/apps/coderlib/css/index.css" media="screen" rel="stylesheet" type="text/css"/>
+    <script src="/static/common/js/jquery.min.js"></script>
+    <script src="/static/common/ace-min/ace.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/static/apps/coderlib/js/index.js"></script>
+    <script>
+        Coder.addBasicNav();
+    </script>
+    <!-- End Coder Includes -->
+
+    <!-- This app's includes -->
+    <link href="{{&static_url}}/css/index.css" media="screen" rel="stylesheet" type="text/css"/>
+    <script src="{{&static_url}}/js/index.js"></script>
+    <!-- End apps includes -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Recipe page</title>
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/typeahead.css"/>
+    <link rel="stylesheet" href="css/bootstrap-tagsinput.css"/>
+    <link rel="stylesheet" href="css/stickyfooter.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="css/main.css"/>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script src="js/typeahead.js"></script>
+    <script src="js/bootstrap-tagsinput.min.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/logo.js"></script>
+</head>
+<body class="">
+      <nav class="navbar navbar-default navbar-fixed-top navbar-toggleable-md bg-faded header">
+        <div class="container-fluid">
+
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+            <div class="navbar-header">
+                <a class="navbar-brand hide-container" href="#">[TANGERINE]</a>
+            </div>
+
+            <div class="collapse navbar-collapse navbar-right" id="navbar">
+                <ul class="nav navbar-nav">
+                    <li><a href="#"> <i class="glyphicon glyphicon-log-in"></i> Sign in</a></li>
+                </ul>
+                <p class="navbar-text"><small><small>Don't have an account? <a href="#">Register</a></small></small></p>
+            </div>
+
+            <!--<div class="collapse navbar-collapse navbar-right" id="navbar">
+                <ul class="nav navbar-nav">
+                    <li><a href="#"> <i class="glyphicon glyphicon-user"></i> User</a></li>
+                    <li><a href="#"> <i class="glyphicon glyphicon-log-out"></i> Sign Out</a></li>
+                </ul>
+            </div>-->
+
+        </div>
+      </nav>
+      <br>
+      <div class="pagecontent">
+        <h1>The burger</h1>
+        <hr />
+        <img src="food.jpg" height="400px" width="700px"  />
+          <hr />
+          <p>
+             <ul>
+                <li>time in min: 20,
+                  price in p 115,
+                  serves  4
+                </li>
+          </ul>
+         </p>
+          <h2>Nutritional Informations</h2>
+          <p>
+           <ul>
+            <li>energyin KCal: 431,
+            salt in mg: 1805,
+            saturated fat in g: 6.1,
+            fat in g: 16.6,
+            sugar in g: 5</li>
+            </ul>
+          </p>
+        <hr />
+        <h2>Ingredients</h2>
+        <ul>
+            <li>2 slices of white bread</li>
+            <li>1 jar of grape jelly</li>
+            <li>1 jar of creamy peanut butter</li>
+            <li>A butter knife</li>
+            <li>A sharp knife</li>
+            <li>A cutting board</li>
+        </ul>
+        <hr />
+    </div>
+</br>
+</body>
+</html>
