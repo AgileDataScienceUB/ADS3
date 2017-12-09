@@ -7,6 +7,7 @@ from .config import MONGO_DB_URI, DB
 import random as rd
 from flask_pymongo import PyMongo
 import hashlib
+import re
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -141,10 +142,11 @@ def get_recipes():
 @app.route('/users/', methods=['post','get'])
 @cross_origin()
 def users_route():
-
+    """Receiving {"user_name":"[username]", "password":"[sha1_hashed_value]", "email":"[valid_email_address]"}"""
     if request.method == 'POST':
 
         jsonObj = json.loads(request.get_data())
+        emailRegex = re.compile(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)", re.I)
 
         if len(set(['user_name', 'password', 'email']).intersection(set(jsonObj.keys()))) < 3:
             return json.dumps({"error": "Data structure is not correct."})
@@ -152,6 +154,8 @@ def users_route():
             return json.dumps({"error": "Data structure is not correct."})
 
         email = str(jsonObj["email"]).lower()
+        if not re.search(emailRegex, email):
+            return json.dumps({"error": "Invalid Email."})
         username = str(jsonObj["user_name"]).lower()
         password = hashlib.sha1(str(jsonObj["password"]).encode()).hexdigest()
 
