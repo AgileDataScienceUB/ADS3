@@ -12,8 +12,8 @@ def login_page():
 
 @app.route('/register/')
 def register_page():
-  return 'Register Page :)'
+  return render_template('registration_page.html')
 
-@app.route('/recipe/<recipe_id>')
+@app.route('/recipe/<recipe_id>/')
 def recipe_page(recipe_id):
   return 'Recipe page with id : {0}'.format(recipe_id)
