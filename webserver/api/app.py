@@ -179,3 +179,27 @@ def get_user_data(user_id):
         return json.dumps({"error": "User Not Found"}), 404
     user["_id"] = user_id
     return json.dumps(user)
+
+@app.route('/login/', methods=['post'])
+@cross_origin()
+def login_user():
+    if not request.get_data():
+        return json.dumps({"error": "No Data."}), 400
+
+    jsonObj = json.loads(request.get_data())
+    emailRegex = re.compile(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)", re.I)
+
+    if len(set(['password', 'email']).intersection(set(jsonObj.keys()))) < 2:
+        return json.dumps({"error": "Data structure is not correct."}), 400
+    if not jsonObj['email'] or not jsonObj['password']:
+        return json.dumps({"error": "Data structure is not correct."}), 400
+
+    email = str(jsonObj["email"]).lower()
+    if not re.search(emailRegex, email):
+        return json.dumps({"error": "Invalid Email."}), 400
+    password = hashlib.sha1(str(jsonObj["password"]).encode()).hexdigest()
+
+    userData = mongo.db.users.find_one({"email": email, "password": password})
+    if mongo.db.users.find_one({"email": email, "password": password}):
+        return redirect(url_for('get_user_data', user_id=userData["_id"]), code=301)
+    return json.dumps({"error": "User not found."}), 400
