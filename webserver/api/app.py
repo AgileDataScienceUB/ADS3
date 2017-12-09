@@ -29,9 +29,9 @@ def get_ingredients():
     jsonObj = json.loads(request.get_data())
 
     if 'query' not in jsonObj.keys():
-        return json.dumps({"error": "No Queries received."})
+        return json.dumps({"error": "No Queries received."}), 400
     if not jsonObj['query']:
-        return json.dumps({"error": "Query is not valid."})
+        return json.dumps({"error": "Query is not valid."}), 400
 
     query = str(jsonObj['query']).strip().lower()
 
@@ -48,7 +48,7 @@ def get_recipes():
     jsonObj = json.loads(request.get_data())
 
     if 'ingredients' not in jsonObj.keys():
-        return json.dumps({"error": "No ingredients received."})
+        return json.dumps({"error": "No ingredients received."}), 400
 
     ingredients = jsonObj['ingredients']
 
@@ -58,7 +58,7 @@ def get_recipes():
         count = jsonObj['count']
 
     if type(jsonObj['ingredients']) != list or not jsonObj['ingredients']:
-        return json.dumps({"error": "Ingredients are not valid."})
+        return json.dumps({"error": "Ingredients are not valid."}), 400
 
 
     #
@@ -149,18 +149,18 @@ def users_route():
         emailRegex = re.compile(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)", re.I)
 
         if len(set(['user_name', 'password', 'email']).intersection(set(jsonObj.keys()))) < 3:
-            return json.dumps({"error": "Data structure is not correct."})
+            return json.dumps({"error": "Data structure is not correct."}), 400
         if not jsonObj['user_name'] or not jsonObj['password'] or not jsonObj['email']:
-            return json.dumps({"error": "Data structure is not correct."})
+            return json.dumps({"error": "Data structure is not correct."}), 400
 
         email = str(jsonObj["email"]).lower()
         if not re.search(emailRegex, email):
-            return json.dumps({"error": "Invalid Email."})
+            return json.dumps({"error": "Invalid Email."}), 400
         username = str(jsonObj["user_name"]).lower()
         password = hashlib.sha1(str(jsonObj["password"]).encode()).hexdigest()
 
         if mongo.db.users.find_one({"email": email}):
-            return json.dumps({"error": "Email already exists."})
+            return json.dumps({"error": "Email already exists."}), 400
 
         newUser = {"user_name": username, "password": password, "email": email}
         id = mongo.db.users.insert(newUser)
@@ -173,9 +173,9 @@ def users_route():
 @cross_origin()
 def get_user_data(user_id):
     if len(user_id) != 24:
-        abort(404)
-    user = mongo.db.users.find_one({"_id": ObjectId(user_id)}, { "email": 1, "user_name": 1, "_id": 0 })
+        return json.dumps({"error": "Data structure is not correct."}), 400
+    user = mongo.db.users.find_one({"_id": ObjectId(user_id)}, {"email": 1, "user_name": 1, "_id": 0})
     if not user:
-        abort(404)
+        return json.dumps({"error": "User Not Found"}), 404
     user["_id"] = user_id
     return json.dumps(user)
