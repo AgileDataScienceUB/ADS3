@@ -1,19 +1,27 @@
 from flask import Flask
-from flask import request
+from flask import request, redirect, url_for, abort
 import json
+from bson.objectid import ObjectId
 from flask_cors import CORS, cross_origin
 from .config import MONGO_DB_URI, DB
 import random as rd
+from flask_pymongo import PyMongo
+import hashlib
 
 app = Flask(__name__)
 cors = CORS(app)
+
+app.config['MONGO_DBNAME'] = DB
+app.config['MONGO_URI'] = MONGO_DB_URI
+
+mongo = PyMongo(app)
 
 @app.route('/')
 @cross_origin()
 def main_page():
   return 'Initial API root'
 
-@app.route('/ingredients', methods=['POST'])
+@app.route('/ingredients/', methods=['POST'])
 @cross_origin()
 def get_ingredients():
     """Receiving {"query":"[characters]"}"""
@@ -21,7 +29,6 @@ def get_ingredients():
 
     if 'query' not in jsonObj.keys():
         return json.dumps({"error": "No Queries received."})
-
     if not jsonObj['query']:
         return json.dumps({"error": "Query is not valid."})
 
@@ -32,7 +39,7 @@ def get_ingredients():
 
     return json.dumps({"ingredients": ingredients})
 
-@app.route('/recipes', methods=['post'])
+@app.route('/recipes/', methods=['post'])
 @cross_origin()
 def get_recipes():
     """Receiving {"ingredients":[list], "count":[int]}"""
@@ -130,3 +137,41 @@ def get_recipes():
     ]
     rand = rd.sample(range(1, 15), 5)
     return json.dumps({"recipes": [x for x in recipes if int(x['id']) in rand], "count": count})
+
+@app.route('/users/', methods=['post','get'])
+@cross_origin()
+def users_route():
+
+    if request.method == 'POST':
+
+        jsonObj = json.loads(request.get_data())
+
+        if len(set(['user_name', 'password', 'email']).intersection(set(jsonObj.keys()))) < 3:
+            return json.dumps({"error": "Data structure is not correct."})
+        if not jsonObj['user_name'] or not jsonObj['password'] or not jsonObj['email']:
+            return json.dumps({"error": "Data structure is not correct."})
+
+        email = str(jsonObj["email"]).lower()
+        username = str(jsonObj["user_name"]).lower()
+        password = hashlib.sha1(str(jsonObj["password"]).encode()).hexdigest()
+
+        if mongo.db.users.find_one({"email": email}):
+            return json.dumps({"error": "Email already exists."})
+
+        newUser = {"user_name": username, "password": password, "email": email}
+        id = mongo.db.users.insert(newUser)
+        return redirect(url_for('get_user_data', user_id=id), code=301)
+
+    elif request.method == 'GET':
+        return 'get'
+
+@app.route('/users/<user_id>/', methods=['GET'])
+@cross_origin()
+def get_user_data(user_id):
+    if len(user_id) != 24:
+        abort(404)
+    user = mongo.db.users.find_one({"_id": ObjectId(user_id)}, { "email": 1, "user_name": 1, "_id": 0 })
+    if not user:
+        abort(404)
+    user["_id"] = user_id
+    return json.dumps(user)
