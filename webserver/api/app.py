@@ -1,5 +1,5 @@
 from flask import Flask
-from flask import request, redirect, url_for, abort
+from flask import request, redirect, url_for, abort, session
 import json
 from bson.objectid import ObjectId
 from flask_cors import CORS, cross_origin
@@ -14,6 +14,8 @@ cors = CORS(app)
 
 app.config['MONGO_DBNAME'] = DB
 app.config['MONGO_URI'] = MONGO_DB_URI
+app.config['SECRET_KEY'] = 'enydM2ANhdcoKwdVa0jWvEsbPFuQpMjf' # Create your own.
+app.config['SESSION_PROTECTION'] = 'strong'
 
 mongo = PyMongo(app)
 
@@ -141,7 +143,7 @@ def get_recipes():
 
 @app.route('/users/', methods=['post','get'])
 @cross_origin()
-def users_route():
+def active_user():
     """Receiving {"user_name":"[username]", "password":"[sha1_hashed_value]", "email":"[valid_email_address]"}"""
     if request.method == 'POST':
 
@@ -167,7 +169,15 @@ def users_route():
         return redirect(url_for('get_user_data', user_id=id), code=301)
 
     elif request.method == 'GET':
-        return 'get'
+        if 'user_id' not in session.keys():
+            return json.dumps({"error": "There is no active user."}), 400
+        if len(session["user_id"]) != 24:
+            return redirect(url_for('logout_user'))
+        user = mongo.db.users.find_one({"_id": ObjectId(session["user_id"])}, {"email": 1, "user_name": 1, "_id": 0})
+        if not user:
+            return json.dumps({"error": "User Not Found"}), 404
+        user["_id"] = session["user_id"]
+        return json.dumps(user)
 
 @app.route('/users/<user_id>/', methods=['GET'])
 @cross_origin()
@@ -183,6 +193,9 @@ def get_user_data(user_id):
 @app.route('/login/', methods=['post'])
 @cross_origin()
 def login_user():
+    if 'user_id' in session.keys():
+        return redirect(url_for('active_user'), code=301)
+
     if not request.get_data():
         return json.dumps({"error": "No Data."}), 400
 
@@ -200,6 +213,13 @@ def login_user():
     password = hashlib.sha1(str(jsonObj["password"]).encode()).hexdigest()
 
     userData = mongo.db.users.find_one({"email": email, "password": password})
-    if mongo.db.users.find_one({"email": email, "password": password}):
-        return redirect(url_for('get_user_data', user_id=userData["_id"]), code=301)
+    if userData:
+        session['user_id'] = str(userData["_id"])
+        return redirect(url_for('active_user'), code=301)
     return json.dumps({"error": "User not found."}), 400
+
+@app.route('/logout/')
+@cross_origin()
+def logout_user():
+    session.pop('user_id', None)
+    return "success"
