@@ -14,7 +14,7 @@ cors = CORS(app)
 
 app.config['MONGO_DBNAME'] = DB
 app.config['MONGO_URI'] = MONGO_DB_URI
-app.config['SECRET_KEY'] = 'enydM2ANhdcoKwdVa0jWvEsbPFuQpMjf' # Create your own.
+app.config['SECRET_KEY'] = 'enydM2ANhdcoKwdVa0jWvEsbPFuQpMjf'
 app.config['SESSION_PROTECTION'] = 'strong'
 
 mongo = PyMongo(app)
@@ -236,7 +236,6 @@ def login_user():
     if userData:
         session['user_id'] = str(userData["_id"])
         return redirect(url_for('active_user'), code=302)
-        # return json.dumps({"_id": session['user_id']})
     return json.dumps({"error": "User not found."})
 
 @app.route('/api/logout/')
