@@ -1,7 +1,7 @@
 (function($){
     $(document).ready(function () {
 
-        var ROOT = 'http://0.0.0.0:5000/';
+        var ROOT = 'http://127.0.0.1:5000/';
 
         function capitalizeFirstLetter(string) {
             return string.charAt(0).toUpperCase() + string.slice(1);
@@ -21,7 +21,7 @@
         function loadMoreRecipes() {
             $(".load-more .btn").html('<i class=\"fa fa-cog fa-spin fa-fw\" aria-hidden=\"true\"></i> Loading Data').attr("disabled","disabled");
             $.ajax({
-                url: API_URL+'api/recipes/',
+                url: ROOT+'api/recipes/',
                 data:JSON.stringify({"ingredients":$("#taglist").tagsinput('items')}),
                 error: function() {
                     alert("AJAX error");
