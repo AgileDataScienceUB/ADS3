@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<style>
+/* Full-width input fields */
+input[type=text], input[type=password] {
+    width: 400px;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+</style>
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Registeration - Mandarin</title>
+
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <link rel="stylesheet" href="../static/css/typeahead.css"/>
+    <link rel="stylesheet" href="../static/css/bootstrap-tagsinput.css"/>
+    <link rel="stylesheet" href="../static/css/stickyfooter.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="../static/css/main.css"/>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script src="../static/js/typeahead.js"></script>
+    <script src="../static/js/bootstrap-tagsinput.min.js"></script>
+    <script src="../static/js/main.js"></script>
+    <script src="../static/js/logo.js"></script>
+    <script src="../static/js/registration.js"></script>
+</head>
+<body class="hide-container">
+#margin top
+<center>
+    <br>
+    <div id="logo" class="text-center">
+                    <h1>[MANDARIN]</h1>
+                </div>
+	<br/>
+    <nav class="navbar navbar-default navbar-fixed-top navbar-toggleable-md bg-faded header">
+        <div class="container-fluid">
+
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+            <div class="navbar-header">
+                <a class="navbar-brand hide-container" href="../">[MANDARIN]</a>
+            </div>
+            <div class="collapse navbar-collapse navbar-right" id="navbar">
+                <ul class="nav navbar-nav">
+                    <li><a href="../login"> <i class="glyphicon glyphicon-log-in"></i> Sign in</a></li>
+                </ul>
+            </div>
+
+
+        </div>
+    </nav>
+
+<form action="#" style="border:1px solid #ccc" id="register-form">
+  <div class="container">
+      <br>
+           <label><b><font size="4">Create an account name</font></b></label>
+      </br>
+      <br>
+           <input type="text" placeholder="Enter User Name" name="username" id="username" required>
+      </br>
+       <br>
+          <label><b><font size="4">Enter email address</font></b></label>
+      </br>
+      <br>
+          <input type="text" placeholder="Enter Email" name="email" id="email" required>
+      </br>
+      <br>
+          <label><b><font size="4">Re-enter email address</font></b></label>
+      </br>
+      <br>
+           <input type="text" placeholder="Re-enter Email" name="re-email" id="re-email" required>
+      </br>
+      <br>
+          <label><b><font size="4">Choose a password</font></b></label>
+      </br>
+      <br>
+           <input type="password" placeholder="Enter Password" name="password" id="password" required>
+      </br>
+      <br>
+          <label><b><font size="4">Re-enter password</font></b></label>
+      </br>
+      <br>
+          <input type="password" placeholder="Re-enter Password" name="re-password" id="re-password" required>
+      </br>
+      <br>
+           <!--<input type="checkbox" checked="checked"> Remember me-->
+      </br>
+      <br>
+      <!--<p><font size="3">By creating an account you agree to our </font><A href='./test_terms_and_privacy.pdf'>Terms & Privacy</A></p>-->
+      </br>
+      <div class="container" style="width: 500px; float:center">
+          <a href="../" type="button" class="btn btn-warning btn-lg" style="width: 200px; margin-left: 0px; "  id="cancel_btn" class="cancelbtn">Cancel</a>
+			<button type="submit" class="btn btn-warning btn-lg" style="width: 200px; margin-left: 0px ;">Register</button>
+      </div>
+  </div>
+</form>
+</center>
+</body>
+</html>
