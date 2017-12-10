@@ -177,12 +177,12 @@ def active_user():
 
         email = str(jsonObj["email"]).lower()
         if not re.search(emailRegex, email):
-            return json.dumps({"error": "Invalid Email."}), 400
+            return json.dumps({"error": "Invalid Email."})
         username = str(jsonObj["user_name"]).lower()
         password = hashlib.sha1(str(jsonObj["password"]).encode()).hexdigest()
 
         if mongo.db.users.find_one({"email": email}):
-            return json.dumps({"error": "Email already exists."}), 400
+            return json.dumps({"error": "Email already exists."})
 
         newUser = {"user_name": username, "password": password, "email": email}
         id = mongo.db.users.insert(newUser)
