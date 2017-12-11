@@ -1,6 +1,6 @@
 (function ($, document, window) {
     $(document).ready(function () {
-        var ROOT = 'http://127.0.0.1:5000/';
+        var ROOT = 'http://0.0.0.0:5000/';
 
         $.ajax({
             url: ROOT+'api/users/',

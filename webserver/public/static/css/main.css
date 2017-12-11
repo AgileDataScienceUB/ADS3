@@ -16,20 +16,17 @@
     display: None;
 }
 
-.recipe-container a > div{
+.recipe-container .panel-body {
     position: relative;
-    height: 200px;
-    margin: 10px 0;
-}
-
-.recipe-container a > div > div{
-    width: 100%;
-    height: 100%;
-    background-image: url("../imgs/recipe-bg.png");
+    height: 300px !important;
 }
 
 .recipe-container a:hover h4{
     color: black;
+}
+
+.recipe-container a{
+    text-decoration: none;
 }
 
 .recipe-container h4{
@@ -42,4 +39,8 @@
 
 .recipes-container{
     margin-top: 30px;
+}
+
+.label-lg {
+  font-size: 15px;
 }
