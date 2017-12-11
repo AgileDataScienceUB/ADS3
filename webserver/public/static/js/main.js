@@ -1,7 +1,7 @@
 (function($){
     $(document).ready(function () {
 
-        var ROOT = 'http://127.0.0.1:5000/';
+        var ROOT = 'http://0.0.0.0:5000/';
 
         function capitalizeFirstLetter(string) {
             return string.charAt(0).toUpperCase() + string.slice(1);
@@ -30,7 +30,7 @@
                 success: function(data) {
                     $.each(data['recipes'],function (idx) {
                         var item = data["recipes"][idx];
-                        var html = '<div class="col-lg-3 col-md-4 col-sm-6 recipe-container"><a href="#'+item["id"]+'"><div style="background: url('+item["image"]+') no-repeat center center; background-size: cover;"><div><h4 class="text-center">'+item['title']+'</h4></div></div></a></div>';
+                        var html = generateOneRecipe(item['id'], item['title'], item['image'], item['score']);
                         $(".recipes").append(html);
                     })
                 },
@@ -58,7 +58,7 @@
                 success: function(data) {
                     $.each(data['recipes'],function (idx) {
                         var item = data["recipes"][idx];
-                        var html = '<div class="col-lg-3 col-md-4 col-sm-6 recipe-container"><a href="#'+item["id"]+'"><div style="background: url('+item["image"]+') no-repeat center center; background-size: cover;"><div><h4 class="text-center">'+item['title']+'</h4></div></div></a></div>';
+                        var html = generateOneRecipe(item['id'], item['title'], item['image'], item['score']);
                         $(".recipes").append(html);
                     })
                 },
@@ -67,6 +67,26 @@
                 deactivateLoading();
                 showRecipes();
             });
+        }
+        function generateOneRecipe(id,title,image,score){
+            var scores = '';
+
+            numberFull = Math.floor(score);
+            numberHalf = (score-numberFull)*2;
+            numberEmpty = Math.floor(5-score);
+
+            for(i=0;i<numberFull;i++){
+                scores += '<span class="fa fa-star"></span> '
+            }
+            for(i=0;i<numberHalf;i++){
+                scores += '<span class="fa fa-star-half-o"></span> '
+            }
+            for(i=0;i<numberEmpty;i++){
+                scores += '<span class="fa fa-star-o"></span> '
+            }
+
+            var html = '<div class="recipe-container col-md-6 col-sm-12"> <a href="recipe/'+id+'"/"> <div class="panel panel-default"> <div class="panel-heading">'+title+'</div> <div class="panel-body" style="background: url('+image+') no-repeat center center; background-size: cover;"><span class="label label-warning label-lg"> '+scores+' </span> </div> </div> </a> </div>';
+            return html;
         }
 
         var substringMatcher = function(strs) {
