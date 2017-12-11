@@ -14,7 +14,7 @@ cors = CORS(app)
 
 app.config['MONGO_DBNAME'] = DB
 app.config['MONGO_URI'] = MONGO_DB_URI
-app.config['SECRET_KEY'] = 'enydM2ANhdcoKwdVa0jWvEsbPFuQpMjf' # Create your own.
+app.config['SECRET_KEY'] = 'enydM2ANhdcoKwdVa0jWvEsbPFuQpMjf'
 app.config['SESSION_PROTECTION'] = 'strong'
 
 mongo = PyMongo(app)
@@ -42,7 +42,7 @@ def recipe_page(recipe_id):
 @app.route('/api/')
 @cross_origin()
 def api_main_page():
-  return 'Initial API root'
+  return 'API root'
 
 @app.route('/api/ingredients/', methods=['POST'])
 @cross_origin()
@@ -62,7 +62,7 @@ def get_ingredients():
 
     return json.dumps({"ingredients": ingredients})
 
-@app.route('/api/recipes/', methods=['post'])
+@app.route('/api/recipes/', methods=['POST'])
 @cross_origin()
 def get_recipes():
     """Receiving {"ingredients":[list], "count":[int]}"""
@@ -161,7 +161,7 @@ def get_recipes():
     rand = rd.sample(range(1, 15), 5)
     return json.dumps({"recipes": [x for x in recipes if int(x['id']) in rand], "count": count})
 
-@app.route('/api/users/', methods=['post','get'])
+@app.route('/api/users/', methods=['POST','GET'])
 @cross_origin()
 def active_user():
     """Receiving {"user_name":"[username]", "password":"[sha1_hashed_value]", "email":"[valid_email_address]"}"""
@@ -177,12 +177,12 @@ def active_user():
 
         email = str(jsonObj["email"]).lower()
         if not re.search(emailRegex, email):
-            return json.dumps({"error": "Invalid Email."}), 400
+            return json.dumps({"error": "Invalid Email."})
         username = str(jsonObj["user_name"]).lower()
         password = hashlib.sha1(str(jsonObj["password"]).encode()).hexdigest()
 
         if mongo.db.users.find_one({"email": email}):
-            return json.dumps({"error": "Email already exists."}), 400
+            return json.dumps({"error": "Email already exists."})
 
         newUser = {"user_name": username, "password": password, "email": email}
         id = mongo.db.users.insert(newUser)
@@ -210,7 +210,7 @@ def get_user_data(user_id):
     user["_id"] = user_id
     return json.dumps(user)
 
-@app.route('/api/login/', methods=['post'])
+@app.route('/api/login/', methods=['POST'])
 @cross_origin()
 def login_user():
     if 'user_id' in session.keys():
@@ -236,7 +236,6 @@ def login_user():
     if userData:
         session['user_id'] = str(userData["_id"])
         return redirect(url_for('active_user'), code=302)
-        # return json.dumps({"_id": session['user_id']})
     return json.dumps({"error": "User not found."})
 
 @app.route('/api/logout/')

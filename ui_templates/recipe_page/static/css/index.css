@@ -1,0 +1,36 @@
+
+.pagecontent {
+    padding-left: 50px;
+    padding-right: 50px;
+}
+
+h1 {
+    font-family: courier;
+    font-size:50px;
+    font-weight: bold;
+    line-height:200%;
+    color: purple;
+}
+
+h2 {
+    font-family: courier;
+    font-size:30px;
+    font-weight: bold;
+    line-height:200%;
+    color: purple;
+}
+
+p {
+    font-family: courier;
+    font-size:20px;
+    line-height:200%;
+    color: purple;
+}
+
+
+li {
+    font-family: courier;
+    font-size:20px;
+    line-height:200%;
+    color: purple;
+}

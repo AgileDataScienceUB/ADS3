@@ -20,6 +20,7 @@
     <script src="static/js/bootstrap-tagsinput.min.js"></script>
     <script src="static/js/main.js"></script>
     <script src="static/js/logo.js"></script>
+    <script src="static/js/navbar_user.js"></script>
 </head>
 <body>
 
@@ -38,18 +39,15 @@
             </div>
 
             <div class="collapse navbar-collapse navbar-right" id="navbar">
-                <ul class="nav navbar-nav">
+                <ul class="nav navbar-nav hide-container" id="navbar-guest">
                     <li><a href="login"> <i class="glyphicon glyphicon-log-in"></i> Sign in</a></li>
+                    <p class="navbar-text"><small><small>Don't have an account? <a href="register">Register</a></small></small></p>
                 </ul>
-                <p class="navbar-text"><small><small>Don't have an account? <a href="register">Register</a></small></small></p>
+                <ul class="nav navbar-nav hide-container" id="navbar-user">
+                    <li><a href="#"> <i class="glyphicon glyphicon-user"></i> Welcome <span id="navbar-username">User</span></a></li>
+                    <li><a href="#" id="navbar-log-out"> <i class="glyphicon glyphicon-log-out"></i> Sign Out</a></li>
+                </ul>
             </div>
-
-            <!--<div class="collapse navbar-collapse navbar-right" id="navbar">
-                <ul class="nav navbar-nav">
-                    <li><a href="#"> <i class="glyphicon glyphicon-user"></i> User</a></li>
-                    <li><a href="#"> <i class="glyphicon glyphicon-log-out"></i> Sign Out</a></li>
-                </ul>
-            </div>-->
 
         </div>
     </nav>

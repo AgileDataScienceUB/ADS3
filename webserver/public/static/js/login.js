@@ -11,7 +11,6 @@
     },
     dataType: 'json',
     success: function(data) {
-        console.log(data);
         if(data._id === undefined){
             $("body").removeClass("hide-container");
         }else{
@@ -34,8 +33,13 @@
                 data:JSON.stringify(data),
                 dataType:'json',
                 success: function (data) {
-                    console.log(data);
-                    window.location.replace("../");
+                    if(data._id === undefined){
+                        alert(data["error"]);
+                        $("#login-form")[0].reset();
+                        $("input#email").focus()
+                    }else{
+                        window.location.replace("../");
+                    }
                 },
                 type: 'POST'
             })
