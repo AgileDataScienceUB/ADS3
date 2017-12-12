@@ -175,6 +175,25 @@ def get_recipes():
     rand = rd.sample(range(1, 15), 5)
     return json.dumps({"recipes": [x for x in recipes if int(x['id']) in rand], "count": count})
 
+@app.route('/api/recipes/<recipe_id>', methods=['GET'])
+@cross_origin()
+def get_recipe(recipe_id):
+
+    # data = mongo.db.recipes.find().limit(50)
+    # data = [str(x["_id"]) for x in data]
+    # return json.dumps(data)
+
+    if len(recipe_id) != 24:
+        return json.dumps({"error": "Data structure is not correct."}), 400
+
+    data = mongo.db.recipes.find_one({"_id": ObjectId(recipe_id)}, {"_id": 0})
+
+    if not data:
+        return json.dumps({"error": "Recipe Not Found"})
+
+    data["_id"] = recipe_id
+    return json.dumps(data)
+
 @app.route('/api/users/', methods=['POST','GET'])
 @cross_origin()
 def active_user():
@@ -220,7 +239,7 @@ def get_user_data(user_id):
         return json.dumps({"error": "Data structure is not correct."}), 400
     user = mongo.db.users.find_one({"_id": ObjectId(user_id)}, {"email": 1, "user_name": 1, "_id": 0})
     if not user:
-        return json.dumps({"error": "User Not Found"}), 404
+        return json.dumps({"error": "User Not Found"})
     user["_id"] = user_id
     return json.dumps(user)
 
