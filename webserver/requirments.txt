@@ -4,3 +4,4 @@ Flask-Script
 Flask-PyMongo
 flask-cors
 WTForms
+numpy
