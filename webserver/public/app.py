@@ -192,8 +192,40 @@ def get_recipe(recipe_id):
     if not data:
         return json.dumps({"error": "Recipe Not Found"})
 
+    rating = mongo.db.ratings.find({"recipe_id": ObjectId(recipe_id)}, {"rating": 1, "_id": 0})
+    rating = [int(x["rating"]) for x in rating]
+    rating = np.mean(rating) if rating else False
+    data["rating"] = rating
+
+    if 'user_id' in session.keys():
+        rating = mongo.db.ratings.find_one({"recipe_id": ObjectId(recipe_id), "user_id": ObjectId(session["user_id"])}, {"rating": 1, "_id": 0})
+        data["user_rating"] = int(rating["rating"]) if rating else False
+    else:
+        data["user_rating"] = False
+
     data["_id"] = recipe_id
     return json.dumps(data)
+
+@app.route('/api/recipe_score/<recipe_id>/', methods=['POST'])
+@cross_origin()
+def update_score(recipe_id):
+    """Receiving {"rating":"[score]"}"""
+    jsonObj = json.loads(request.get_data())
+
+    if len(recipe_id) != 24:
+        return json.dumps({"error": "Data structure is not correct."}), 400
+
+    if 'rating' not in jsonObj.keys():
+        return json.dumps({"error": "Data structure is not correct."}), 400
+
+    if 'user_id' not in session.keys():
+        return json.dumps({"error": "No active users."})
+
+    data = mongo.db.ratings.update({"recipe_id": ObjectId(recipe_id), "user_id": ObjectId(session["user_id"])},
+                                   {"recipe_id": ObjectId(recipe_id), "user_id": ObjectId(session["user_id"]), "rating": jsonObj["rating"], },
+                                   upsert=True)
+
+    return 'success'
 
 @app.route('/api/users/', methods=['POST','GET'])
 @cross_origin()
