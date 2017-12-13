@@ -8,6 +8,7 @@ import random as rd
 from flask_pymongo import PyMongo
 import hashlib
 import re
+import numpy as np
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -33,7 +34,7 @@ def register_page():
 
 @app.route('/recipe/<recipe_id>/')
 def recipe_page(recipe_id):
-  return "recipe page"
+  return render_template('recipe_page.html')
 
 #
 # API
