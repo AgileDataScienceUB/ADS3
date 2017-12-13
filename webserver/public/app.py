@@ -221,11 +221,11 @@ def update_score(recipe_id):
     if 'user_id' not in session.keys():
         return json.dumps({"error": "No active users."})
 
-    data = mongo.db.ratings.update({"recipe_id": ObjectId(recipe_id), "user_id": ObjectId(session["user_id"])},
+    mongo.db.ratings.update({"recipe_id": ObjectId(recipe_id), "user_id": ObjectId(session["user_id"])},
                                    {"recipe_id": ObjectId(recipe_id), "user_id": ObjectId(session["user_id"]), "rating": jsonObj["rating"], },
                                    upsert=True)
 
-    return 'success'
+    return redirect(url_for('get_recipe', recipe_id=recipe_id), code=302)
 
 @app.route('/api/users/', methods=['POST','GET'])
 @cross_origin()
