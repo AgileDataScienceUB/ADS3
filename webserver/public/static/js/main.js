@@ -1,7 +1,7 @@
 (function($){
     $(document).ready(function () {
 
-        var ROOT = 'http://0.0.0.0:5000/';
+        var ROOT = window.location.protocol+'//'+window.location.host+'/';
 
         function capitalizeFirstLetter(string) {
             return string.charAt(0).toUpperCase() + string.slice(1);
