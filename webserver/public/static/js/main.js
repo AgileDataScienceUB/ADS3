@@ -25,6 +25,7 @@
                 data:JSON.stringify({"ingredients":$("#taglist").tagsinput('items'), "skip":$(".recipes").children("div").length}),
                 error: function() {
                     alert("AJAX error");
+                    $(".load-more .btn").html('Load More Recipes').removeAttr("disabled");
                 },
                 dataType: 'json',
                 success: function(data) {
