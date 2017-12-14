@@ -89,31 +89,15 @@
             return html;
         }
 
-        var substringMatcher = function(strs) {
-            return function findMatches(q, cb) {
-                var matches, substringRegex;
+        var ingredients = new Bloodhound({
+            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+            queryTokenizer: Bloodhound.tokenizers.whitespace,
+            remote: {
+                url: ROOT+'api/ingredients/%QUERY/',
+                wildcard: '%QUERY'
+            }
+        });
 
-                // an array that will be populated with substring matches
-                matches = [];
-
-                // regex used to determine if a string contains the substring `q`
-                substrRegex = new RegExp(q, 'i');
-
-                // iterate through the pool of strings and for any string that
-                // contains the substring `q`, add it to the `matches` array
-                $.each(strs, function(i, str) {
-                    if (substrRegex.test(str)) {
-                        matches.push(capitalizeFirstLetter(str));
-                    }
-                });
-
-                cb(matches);
-            };
-        };
-
-        var states = ['Eggs', 'Flour', 'Oil', 'Banana', 'Apple', 'Sugar', 'Bread', 'Oranges', 'lemon', 'chicken', 'vanilla', 'thyme', 'salmon', 'cashew', 'mangos', 'salt', 'pepper', 'olive', 'garlic', 'milk', 'Cream', 'tomatoe', 'rice', 'ginger', 'honey', 'corn', 'basil', 'mint', 'bacon', 'carrot'];
-
-        // TODO: find a better autocomplete plugin compatible with ajax
         $('#typeahead').typeahead({
                 hint: true,
                 highlight: true,
@@ -121,7 +105,7 @@
             },
             {
                 name: 'states',
-                source: substringMatcher(states) // CHANGE: load the list dynamically
+                source: ingredients // CHANGE: load the list dynamically
             });
 
         $("#ingredients-form").submit(function (e) {
