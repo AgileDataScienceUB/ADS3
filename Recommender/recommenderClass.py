@@ -114,6 +114,7 @@ class MongoServer():
         return self.db.get_collection(collection_name).insert(item)
      
         
+
 class Recommender:
     
     def __init__(self):
@@ -259,7 +260,7 @@ class Recommender:
         
         objectsIds = []
         for recepie in respons:
-            objectsIds.append(recepie['_id'])
+            objectsIds.append(recepie['recipe_id'])
             
         return objectsIds
     
@@ -291,9 +292,9 @@ class Recommender:
 
         dis = dict()
         for rec in recipes_dict:
-            dis[rec['_id']] = self.distance_recipes(ingridents, rec['ingredients'])
+            print(rec)
+            dis[rec['recipe_id']] = self.distance_recipes(ingridents, rec['ingredients'])
 
-        df_return = sorted(dis.items(),key=operator.itemgetter(1),reverse=True)[0:10]
+        df_return = sorted(dis.items(), key=operator.itemgetter(1), reverse=True)[0:10]
 
         return [obj for obj, rat in df_return]
-    
