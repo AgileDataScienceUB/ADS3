@@ -22,7 +22,7 @@
             $(".load-more .btn").html('<i class=\"fa fa-cog fa-spin fa-fw\" aria-hidden=\"true\"></i> Loading Data').attr("disabled","disabled");
             $.ajax({
                 url: ROOT+'api/recipes/',
-                data:JSON.stringify({"ingredients":$("#taglist").tagsinput('items')}),
+                data:JSON.stringify({"ingredients":$("#taglist").tagsinput('items'), "skip":$(".recipes").children("div").length}),
                 error: function() {
                     alert("AJAX error");
                 },
@@ -30,7 +30,7 @@
                 success: function(data) {
                     $.each(data['recipes'],function (idx) {
                         var item = data["recipes"][idx];
-                        var html = generateOneRecipe(item['id'], item['title'], item['image'], item['score']);
+                        var html = generateOneRecipe(item['_id'], item['name'], item['image'], item['rating']);
                         $(".recipes").append(html);
                     })
                 },
@@ -58,7 +58,7 @@
                 success: function(data) {
                     $.each(data['recipes'],function (idx) {
                         var item = data["recipes"][idx];
-                        var html = generateOneRecipe(item['id'], item['title'], item['image'], item['score']);
+                        var html = generateOneRecipe(item['_id'], item['name'], item['image'], item['rating']);
                         $(".recipes").append(html);
                     })
                 },
@@ -68,21 +68,25 @@
                 showRecipes();
             });
         }
-        function generateOneRecipe(id,title,image,score){
+        function generateOneRecipe(id,title,image,rating){
             var scores = '';
 
-            numberFull = Math.floor(score);
-            numberHalf = (score-numberFull)*2;
-            numberEmpty = Math.floor(5-score);
+            if(!rating){
+                scores = 'No Ratings. Be the first <span class="fa fa-check-square"></span>'
+            }else{
+                numberFull = Math.floor(rating);
+                numberHalf = Math.ceil(rating-numberFull);
+                numberEmpty = Math.floor(5-rating);
 
-            for(i=0;i<numberFull;i++){
-                scores += '<span class="fa fa-star"></span> '
-            }
-            for(i=0;i<numberHalf;i++){
-                scores += '<span class="fa fa-star-half-o"></span> '
-            }
-            for(i=0;i<numberEmpty;i++){
-                scores += '<span class="fa fa-star-o"></span> '
+                for(i=0;i<numberFull;i++){
+                    scores += '<span class="fa fa-star"></span> '
+                }
+                for(i=0;i<numberHalf;i++){
+                    scores += '<span class="fa fa-star-half-o"></span> '
+                }
+                for(i=0;i<numberEmpty;i++){
+                    scores += '<span class="fa fa-star-o"></span> '
+                }
             }
 
             var html = '<div class="recipe-container col-md-6 col-sm-12"> <a href="recipe/'+id+'"/"> <div class="panel panel-default"> <div class="panel-heading">'+title+'</div> <div class="panel-body" style="background: url('+image+') no-repeat center center; background-size: cover;"><span class="label label-warning label-lg"> '+scores+' </span> </div> </div> </a> </div>';
