@@ -83,7 +83,7 @@ def get_recipes():
         return json.dumps({"error": "Ingredients are not valid."}), 400
 
     # TODO: Replace correct recommender with limit and skip
-    rec = Recommender()
+    rec = Recommender({'name': 'huang', 'password': 'chen1992', 'url': 'ds233895.mlab.com:33895', 'dbname': 'agile_data_science_group_3'})
     ids = rec.dummieRecommendation(limit)
     recipes = mongo.db.recipes.find({"_id": {"$in": ids}})
     result = []
