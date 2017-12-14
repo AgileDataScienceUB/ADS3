@@ -7,6 +7,7 @@ from bson.objectid import ObjectId
 import operator
 from random import shuffle
 
+
 class MongoServer():
     credentials = None
     conn = None
@@ -110,11 +111,11 @@ class MongoServer():
     
     """Insert one element into collection"""
     def insertInCollection (self, collection_name,  item):
-        assert type(item) == {}, "Item must be a dictionary"
-        return self.db.get_collection(collection_name).insert(item)
+        assert type(item) == dict, "Item must be a dictionary"
+        return self.db.get_collection(collection_name).insert_one(item)
      
         
- class Recommender:
+class Recommender:
     
     def __init__(self, credentials):
         # connect to mongo with MongoServer object
@@ -243,12 +244,12 @@ class MongoServer():
     
    
     """Recommender of Collaborative Filtering"""
-    def collaborativeFiltering(self, idUser, n = 10):
+    def collaborativeFiltering(self, idUser, N = 6, skip = 0):
         # take the ratings of the user
         # with the recipes of the user, find which recepes we can generate
         # generate the recommender matrix for user
         # call the distance function
-        return self.dummieRecommendation(N)
+        return self.server.searchInCollection('CollRecom', 'user_id', idUser,  N = N + skip)[0]['recomendations'][skip:skip+N]
     
     """ Method that search in function of the ingredients"""
     def searchRecepieByIngredients(self, listIngredients, N = 6, skip = 0):
@@ -294,8 +295,6 @@ class MongoServer():
         for rec in recipes_dict:
             dis[rec['recipe_id']] = self.distance_recipes(ingridents, rec['ingredients'])
 
-        df_return = sorted(dis.items(), key=operator.itemgetter(1), reverse=True)[skip : N + skip]
+        df_return = sorted(dis.items(), key=operator.itemgetter(1), reverse=True)[skip:N+ skip]
 
         return [obj for obj, rat in df_return]
-    
-rec = Recommender({'name':'huang', 'password':'chen1992', 'url':'ds233895.mlab.com:33895', 'dbname': 'agile_data_science_group_3'})
