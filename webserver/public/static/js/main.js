@@ -19,6 +19,7 @@
             $(".recipes-container").addClass("hide-container")
         }
         function loadMoreRecipes() {
+            hideMessage();
             $(".load-more .btn").html('<i class=\"fa fa-cog fa-spin fa-fw\" aria-hidden=\"true\"></i> Loading Data').attr("disabled","disabled");
             $.ajax({
                 url: ROOT+'api/recipes/',
@@ -29,6 +30,10 @@
                 },
                 dataType: 'json',
                 success: function(data) {
+                    if(data['recipes'].length == 0){
+                        showMessage("<strong>This is embarrassing!</strong> There are no more recipes matching your search.");
+                        return true;
+                    }
                     $.each(data['recipes'],function (idx) {
                         var item = data["recipes"][idx];
                         var html = generateOneRecipe(item['_id'], item['name'], item['image'], item['rating']);
@@ -41,6 +46,7 @@
             });
         }
         function loadRecips() {
+            hideMessage()
             ingredients = $("#taglist").tagsinput('items');
             if(ingredients.length < 1){
                 hideRecipes();
@@ -57,6 +63,10 @@
                 },
                 dataType: 'json',
                 success: function(data) {
+                    if(data['recipes'].length == 0){
+                        showMessage("<strong>This is embarrassing!</strong> We do not have what you are looking for but don't give up. There are lots of delicious recipes.");
+                        return true;
+                    }
                     $.each(data['recipes'],function (idx) {
                         var item = data["recipes"][idx];
                         var html = generateOneRecipe(item['_id'], item['name'], item['image'], item['rating']);
@@ -92,6 +102,16 @@
 
             var html = '<div class="recipe-container col-md-6 col-sm-12"> <a href="recipe/'+id+'"/"> <div class="panel panel-default"> <div class="panel-heading">'+title+'</div> <div class="panel-body" style="background: url('+image+') no-repeat center center; background-size: cover;"><span class="label label-warning label-lg"> '+scores+' </span> </div> </div> </a> </div>';
             return html;
+        }
+        function hideMessage() {
+            $(".load-more").removeClass("hide-container");
+            $("#recipe-end-message").addClass("hide-container");
+            $("#recipe-end-message .message").html("");
+        }
+        function showMessage(msg) {
+            $(".load-more").addClass("hide-container");
+            $("#recipe-end-message").removeClass("hide-container");
+            $("#recipe-end-message .message").html(msg);
         }
 
         var ingredients = new Bloodhound({
