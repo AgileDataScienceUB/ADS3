@@ -294,7 +294,7 @@ class MongoServer():
         for rec in recipes_dict:
             dis[rec['recipe_id']] = self.distance_recipes(ingridents, rec['ingredients'])
 
-        df_return = sorted(dis.items(), key=operator.itemgetter(1), reverse=True)[skip:N]
+        df_return = sorted(dis.items(), key=operator.itemgetter(1), reverse=True)[skip : N + skip]
 
         return [obj for obj, rat in df_return]
     
