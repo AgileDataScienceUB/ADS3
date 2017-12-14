@@ -15,6 +15,7 @@ import random as rd
 from flask_pymongo import PyMongo
 import hashlib
 import re
+import os
 
 DB = {
     "username": "crawler",
@@ -457,6 +458,22 @@ def get_recipe(recipe_id):
     data["_id"] = recipe_id
     return json.dumps(data)
 
+@app.route('/api/random_recipe/', methods=['GET'])
+@cross_origin()
+def random_recipe():
+
+    data = mongo.db.recipes.aggregate([ { "$sample": { "size": 1 } } ])
+    for item in data:
+        data = item
+        data['_id'] = str(data["_id"])
+
+    rating = mongo.db.ratings.find({"recipe_id": ObjectId(data["_id"])}, {"rating": 1, "_id": 0})
+    rating = [int(x["rating"]) for x in rating]
+    rating = np.mean(rating) if rating else False
+    data["rating"] = rating
+
+    return json.dumps(data)
+
 @app.route('/api/recipe_score/<recipe_id>/', methods=['POST'])
 @cross_origin()
 def update_score(recipe_id):
@@ -562,4 +579,5 @@ def logout_user():
     return "success"
 
 if __name__=='__main__':
-    app.run(host='0.0.0.0')
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
