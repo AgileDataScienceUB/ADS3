@@ -7,7 +7,6 @@ from bson.objectid import ObjectId
 import operator
 from random import shuffle
 
-
 class MongoServer():
     credentials = None
     conn = None
@@ -96,11 +95,11 @@ class MongoServer():
         return self.db.get_collection(collection_name).find_one()
     
     """Seach in collection with multiple querys"""
-    def searchWithMultiplyConditions(self, collection_name, _query, condition ='$and', N = 10):
+    def searchWithMultiplyConditions(self, collection_name, _query, condition ='$and', N = 6, skip = 0):
         query = []
-        for item in self.db.get_collection(collection_name).find({condition:_query}).limit( N ):
+        for item in self.db.get_collection(collection_name).find({condition:_query}).limit( N + skip):
             query.append(item)
-        return query
+        return query[skip:]
              
     """Find N elements in one collection"""
     def findNElement(self, collection_name, N):
@@ -115,8 +114,7 @@ class MongoServer():
         return self.db.get_collection(collection_name).insert(item)
      
         
-
-class Recommender:
+ class Recommender:
     
     def __init__(self, credentials):
         # connect to mongo with MongoServer object
@@ -253,12 +251,12 @@ class Recommender:
         return self.dummieRecommendation(N)
     
     """ Method that search in function of the ingredients"""
-    def searchRecepieByIngredients(self, listIngredients, N = 10):
+    def searchRecepieByIngredients(self, listIngredients, N = 6, skip = 0):
         query = []
         for ingredient in listIngredients:
             query.append({'ingredients':ingredient})
         
-        respons = self.server.searchWithMultiplyConditions('RecIng', query)
+        respons = self.server.searchWithMultiplyConditions('RecIng', query, N = N, skip = skip)
         
         objectsIds = []
         for recepie in respons:
@@ -288,7 +286,7 @@ class Recommender:
         return d
 
     """Recommender based on content"""
-    def bestRated(self, idRecepie):
+    def bestRated(self, idRecepie, N = 6, skip = 0):
         recipes_dict = self.server.getItems('RecIng', N = 2000)
         ingridents = self.server.searchInCollection('RecIng', 'recipe_id', idRecepie)[0]['ingredients']
 
@@ -296,7 +294,7 @@ class Recommender:
         for rec in recipes_dict:
             dis[rec['recipe_id']] = self.distance_recipes(ingridents, rec['ingredients'])
 
-        df_return = sorted(dis.items(), key=operator.itemgetter(1), reverse=True)[0:10]
+        df_return = sorted(dis.items(), key=operator.itemgetter(1), reverse=True)[skip:N]
 
         return [obj for obj, rat in df_return]
     
