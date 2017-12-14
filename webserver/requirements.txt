@@ -6,3 +6,6 @@ flask-cors
 WTForms
 numpy
 gunicorn
+pandas
+pymongo
+tqdm
