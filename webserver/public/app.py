@@ -294,19 +294,25 @@ class Recommender:
                skip:skip + N]
 
     """ Method that search in function of the ingredients"""
+    def searchRecepieByIngredients(self, listIngredients, N = 6, skip = 0):
+       query = []
+       for ingredient in listIngredients:
+           query.append({'ingredients':ingredient})
 
-    def searchRecepieByIngredients(self, listIngredients, N=6, skip=0):
-        query = []
-        for ingredient in listIngredients:
-            query.append({'ingredients': ingredient})
+       respons = self.server.searchWithMultiplyConditions('RecIng', query, N = N, condition ='$and', skip = skip)
 
-        respons = self.server.searchWithMultiplyConditions('RecIng', query, N=N, skip=skip)
+       if len(respons) == 0:
+           respons = self.server.searchWithMultiplyConditions('RecIng', query, N = N, condition ='$or', skip = skip)
 
-        objectsIds = []
-        for recepie in respons:
-            objectsIds.append(recepie['recipe_id'])
+       if len(respons) > 0 and len(respons) < N:
+           respons += self.server.searchWithMultiplyConditions('RecIng', query, N = N - len(respons) , condition ='$or', skip = skip)
 
-        return objectsIds
+
+       objectsIds = []
+       for recepie in respons:
+           objectsIds.append(recepie['recipe_id'])
+
+       return objectsIds
 
     """ Return top n recipes by maximum mean rating. In case of draw, then by minimum standard deviation rating. """
 
@@ -366,15 +372,17 @@ def login_page():
 def register_page():
   return render_template('registration_page.html')
 
-@app.route('/register/<recipe_id>/')
-#@app.route('/rating/')
-def rate_page(recipe_id):
-  user_id = mongo.db.users.find_one({"_id": ObjectId(session["user_id"])})["_id"]
-  rating_counts = mongo.db.ratings.find({"user_id":user_id}).count()
-  if rating_counts>4:
-    return render_template('main_page.html')
-  else:
-      return render_template('rate.html')
+@app.route('/rating/')
+def rate_page():
+    if 'user_id' not in session.keys():
+        return redirect(url_for('main_page'), code=302)
+
+    rating_counts = mongo.db.ratings.find({"user_id":ObjectId(session["user_id"])}).count()
+    print(rating_counts)
+    if rating_counts > 4:
+        return redirect(url_for('main_page'), code=302)
+    else:
+        return render_template('rate_page.html')
 
 @app.route('/recipe/<recipe_id>/')
 def recipe_page(recipe_id):
