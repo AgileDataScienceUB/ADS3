@@ -5,6 +5,7 @@ import bson
 from tqdm import tqdm
 from bson.objectid import ObjectId
 import operator
+from random import shuffle
 
 class MongoServer():
     credentials = None
@@ -114,7 +115,6 @@ class MongoServer():
         return self.db.get_collection(collection_name).insert(item)
      
         
-
 class Recommender:
     
     def __init__(self):
@@ -124,9 +124,10 @@ class Recommender:
     """Dummie Recommender"""
     def dummieRecommendation(self, N = 10):
         listObjectIds = []
-        for item in self.server.findNElement('recipes', N):
+        for item in self.server.findNElement('recipes', 1000):
             listObjectIds.append(item['_id'])
-        return listObjectIds
+        shuffle(listObjectIds)
+        return listObjectIds[:N]
         
     """Method that check if the object is a ObjectId"""
     def isObjectId(self, _id):
@@ -266,7 +267,7 @@ class Recommender:
     
     """ Return top n recipes by maximum mean rating. In case of draw, then by minimum standard deviation rating. """
     def bestRatedWeb(self, n=10):
-        data = pd.DataFrame(self.server.getItems('ratings', N = 16000))
+        data = pd.DataFrame(self.server.getItems('ratings', N = 2000))
         # top rated
         data["rating"] = data["rating"].astype(float)
         recipe_rating_mean = data.groupby(['recipe_id'])['rating'].mean()
@@ -287,7 +288,7 @@ class Recommender:
 
     """Recommender based on content"""
     def bestRated(self, idRecepie):
-        recipes_dict = self.server.getItems('RecIng', N = 10)
+        recipes_dict = self.server.getItems('RecIng', N = 2000)
         ingridents = self.server.searchInCollection('RecIng', 'recipe_id', idRecepie)[0]['ingredients']
 
         dis = dict()
@@ -297,3 +298,4 @@ class Recommender:
         df_return = sorted(dis.items(), key=operator.itemgetter(1), reverse=True)[0:10]
 
         return [obj for obj, rat in df_return]
+    
