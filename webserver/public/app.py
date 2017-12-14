@@ -45,23 +45,16 @@ def recipe_page(recipe_id):
 def api_main_page():
   return 'API root'
 
-@app.route('/api/ingredients/', methods=['POST'])
+@app.route('/api/ingredients/<query>/', methods=['GET'])
 @cross_origin()
-def get_ingredients():
-    """Receiving {"query":"[characters]"}"""
-    jsonObj = json.loads(request.get_data())
+def get_ingredients(query):
 
-    if 'query' not in jsonObj.keys():
-        return json.dumps({"error": "No Queries received."}), 400
-    if not jsonObj['query']:
-        return json.dumps({"error": "Query is not valid."}), 400
+    query = str(query).strip().lower()
 
-    query = str(jsonObj['query']).strip().lower()
+    ingredients = mongo.db.ingredients.find({"Ingredient": {"$regex": "^"+query}}, {"Ingredient": 1}).limit(10)
+    ingredients = [x["Ingredient"] for x in ingredients]
 
-    ingredients = ['Eggs1', 'Eggs3', 'Eggs2', 'Flour', 'Oil', 'Banana', 'Apple', 'Sugar', 'Bread', 'Oranges'] # TODO: Load complete list of ingredient
-    ingredients = [x for x in ingredients if str(x).lower().find(query) > -1]
-
-    return json.dumps({"ingredients": ingredients})
+    return json.dumps(ingredients)
 
 @app.route('/api/recipes/', methods=['POST'])
 @cross_origin()
