@@ -130,11 +130,11 @@ class MongoServer:
 
     """Seach in collection with multiple querys"""
 
-    def searchWithMultiplyConditions(self, collection_name, _query, condition='$and', N=10):
+    def searchWithMultiplyConditions(self, collection_name, _query, condition='$and', N=6, skip=0):
         query = []
-        for item in self.db.get_collection(collection_name).find({condition: _query}).limit(N):
+        for item in self.db.get_collection(collection_name).find({condition: _query}).limit(N + skip):
             query.append(item)
-        return query
+        return query[skip:]
 
     """Find N elements in one collection"""
 
@@ -147,8 +147,8 @@ class MongoServer:
     """Insert one element into collection"""
 
     def insertInCollection(self, collection_name, item):
-        assert type(item) == {}, "Item must be a dictionary"
-        return self.db.get_collection(collection_name).insert(item)
+        assert type(item) == dict, "Item must be a dictionary"
+        return self.db.get_collection(collection_name).insert_one(item)
 
 class Recommender:
     def __init__(self, credentials):
@@ -285,21 +285,22 @@ class Recommender:
 
     """Recommender of Collaborative Filtering"""
 
-    def collaborativeFiltering(self, idUser, n=10):
+    def collaborativeFiltering(self, idUser, N=6, skip=0):
         # take the ratings of the user
         # with the recipes of the user, find which recepes we can generate
         # generate the recommender matrix for user
         # call the distance function
-        return self.dummieRecommendation(N)
+        return self.server.searchInCollection('CollRecom', 'user_id', idUser, N=N + skip)[0]['recomendations'][
+               skip:skip + N]
 
     """ Method that search in function of the ingredients"""
 
-    def searchRecepieByIngredients(self, listIngredients, N=10, skip=0):
+    def searchRecepieByIngredients(self, listIngredients, N=6, skip=0):
         query = []
         for ingredient in listIngredients:
             query.append({'ingredients': ingredient})
 
-        respons = self.server.searchWithMultiplyConditions('RecIng', query)
+        respons = self.server.searchWithMultiplyConditions('RecIng', query, N=N, skip=skip)
 
         objectsIds = []
         for recepie in respons:
@@ -331,7 +332,7 @@ class Recommender:
 
     """Recommender based on content"""
 
-    def bestRated(self, idRecepie):
+    def bestRated(self, idRecepie, N=6, skip=0):
         recipes_dict = self.server.getItems('RecIng', N=2000)
         ingridents = self.server.searchInCollection('RecIng', 'recipe_id', idRecepie)[0]['ingredients']
 
@@ -339,7 +340,7 @@ class Recommender:
         for rec in recipes_dict:
             dis[rec['recipe_id']] = self.distance_recipes(ingridents, rec['ingredients'])
 
-        df_return = sorted(dis.items(), key=operator.itemgetter(1), reverse=True)[0:10]
+        df_return = sorted(dis.items(), key=operator.itemgetter(1), reverse=True)[skip:N + skip]
 
         return [obj for obj, rat in df_return]
 
@@ -409,7 +410,7 @@ def get_recipes():
     if 'ingredients' not in jsonObj.keys():
         return json.dumps({"error": "No ingredients received."}), 400
 
-    ingredients = jsonObj['ingredients']
+    ingredients = [str(x).lower() for x in jsonObj['ingredients']]
 
     if 'limit' not in jsonObj.keys():
         limit = 6
@@ -426,7 +427,7 @@ def get_recipes():
 
     # TODO: Replace correct recommender with limit and skip
     rec = Recommender({'name': 'huang', 'password': 'chen1992', 'url': 'ds233895.mlab.com:33895', 'dbname': 'agile_data_science_group_3'})
-    ids = rec.dummieRecommendation(limit)
+    ids = rec.searchRecepieByIngredients(ingredients, limit, skip)
     recipes = mongo.db.recipes.find({"_id": {"$in": ids}})
     result = []
     for recipe in recipes:
