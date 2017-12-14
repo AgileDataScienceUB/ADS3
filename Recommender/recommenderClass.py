@@ -7,24 +7,24 @@ from bson.objectid import ObjectId
 import operator
 from random import shuffle
 
+
 class MongoServer():
     credentials = None
     conn = None
     db = None
     collections = {}
-    def __init__(self, run = False, credentials = "credentials.txt", db_name = "agile_data_science_group_3"):
+    def __init__(self, credentials, run = False, db_name = "agile_data_science_group_3"):
         if run:
-            if not self.connect2Mongo(credentials):
+            if not self.connect2Mongo(credentials, db_name):
                 print("Connection to server Failed.")
             
             if not self.connect2DataBase(db_name):
                 print("Connection Data Base Failed.")
     """Rotine to connect to Mongo DB"""    
-    def connect2Mongo(self, credentials = "credentials.txt"):
+    def connect2Mongo(self, credentials, db):
         try:
             #use your database name, user and password here:
-            with open(credentials, 'r', encoding='utf-8') as f:
-                [name,password,url,dbname]=f.read().splitlines()
+            name,password,url,dbname = credentials['name'], credentials['password'], credentials['url'], credentials['dbname']
             conn=pymongo.MongoClient("mongodb://{}:{}@{}/{}".format(name,password,url,dbname))
             self.conn = conn
             return True
@@ -115,11 +115,12 @@ class MongoServer():
         return self.db.get_collection(collection_name).insert(item)
      
         
+
 class Recommender:
     
-    def __init__(self):
+    def __init__(self, credentials):
         # connect to mongo with MongoServer object
-        self.server = MongoServer(True)
+        self.server = MongoServer(credentials, True)
         
     """Dummie Recommender"""
     def dummieRecommendation(self, N = 10):
@@ -299,3 +300,4 @@ class Recommender:
 
         return [obj for obj, rat in df_return]
     
+rec = Recommender({'name':'huang', 'password':'chen1992', 'url':'ds233895.mlab.com:33895', 'dbname': 'agile_data_science_group_3'})
