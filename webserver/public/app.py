@@ -33,6 +33,16 @@ def login_page():
 def register_page():
   return render_template('registration_page.html')
 
+@app.route('/register/<recipe_id>/')
+#@app.route('/rating/')
+def rate_page(recipe_id):
+  user_id = mongo.db.users.find_one({"_id": ObjectId(session["user_id"])})["_id"]
+  rating_counts = mongo.db.ratings.find({"user_id":user_id}).count()
+  if rating_counts>4:
+    return render_template('main_page.html')
+  else:
+      return render_template('rate.html')
+
 @app.route('/recipe/<recipe_id>/')
 def recipe_page(recipe_id):
   return render_template('recipe_page.html')
