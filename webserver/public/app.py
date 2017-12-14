@@ -9,6 +9,7 @@ from flask_pymongo import PyMongo
 import hashlib
 import re
 import numpy as np
+from .libraries.recommenderClass import Recommender, MongoServer
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -68,106 +69,32 @@ def get_recipes():
 
     ingredients = jsonObj['ingredients']
 
-    if 'count' not in jsonObj.keys():
-        count = 5
+    if 'limit' not in jsonObj.keys():
+        limit = 6
     else:
-        count = jsonObj['count']
+        limit = jsonObj['limit']
+
+    if 'skip' not in jsonObj.keys():
+        skip = 0
+    else:
+        skip = jsonObj['skip']
 
     if type(jsonObj['ingredients']) != list or not jsonObj['ingredients']:
         return json.dumps({"error": "Ingredients are not valid."}), 400
 
-
-    #
-    #   Dummy Recipes
-    #
-    recipes = [
-        {
-            "id": "1",
-            "title": "Grilled Cubanos",
-            "image": "http://www.seriouseats.com/recipes/assets_c/2010/06/20100603-cubano-large-thumb-625xauto-93006.jpg",
-            "score": 0.5
-        },
-        {
-            "id": "2",
-            "title": "Cornish Pasty",
-            "image": "http://www.seriouseats.com/recipes/assets_c/2012/01/01212012-188504-sunday-brunch-cornish-pasty-primary-thumb-625xauto-213242.jpg",
-            "score": 1
-        },
-        {
-            "id": "3",
-            "title": "Tomato Avgolemono Soup",
-            "image": "http://www.seriouseats.com/recipes/assets_c/2012/02/20120214-seriousentertaining-soupson-tomatoavegolemenosoup-thumb-625xauto-219164.jpg",
-            "score": 1.5
-        },
-        {
-            "id": "4",
-            "title": "Cioppino",
-            "image": "http://www.seriouseats.com/recipes/assets_c/2012/02/02182012-193155-sunday-supper-cioppino-primary-thumb-625xauto-219621.jpg",
-            "score": 2
-        },
-        {
-            "id": "5",
-            "title": "Steak Taco Salad",
-            "image": "http://www.seriouseats.com/recipes/assets_c/2012/02/20120216-193359-dinner-tonight-steak-taco-salad-primary-thumb-625xauto-219875.jpg",
-            "score": 2.5
-        },
-        {
-            "id": "6",
-            "title": "Oyakodon",
-            "image": "http://www.seriouseats.com/recipes/assets_c/2012/02/20120219oyakodonlow610-thumb-625xauto-220819.jpg",
-            "score": 3
-        },
-        {
-            "id": "7",
-            "title": "Oyakodon",
-            "image": "http://www.seriouseats.com/recipes/assets_c/2012/02/20120219oyakodonlow610-thumb-625xauto-220819.jpg",
-            "score": 3.5
-        },
-        {
-            "id": "8",
-            "title": "Raspberry Limeade",
-            "image": "http://www.seriouseats.com/recipes/assets_c/2012/06/20120618-lemonade-variations-03-thumb-625xauto-250111.jpg",
-            "score": 4
-        },
-        {
-            "id": "9",
-            "title": "Campari Flamingo",
-            "image": "http://www.seriouseats.com/recipes/assets_c/2012/06/20120621-campari-flamingo-cocktail-primary-thumb-625xauto-251384.jpg",
-            "score": 4.5
-        },
-        {
-            "id": "10",
-            "title": "Watermelon Cake",
-            "image": "http://www.seriouseats.com/recipes/assets_c/2012/07/20120709-213358-watermeloncake-thumb-625xauto-254470.jpg",
-            "score": 0
-        },
-        {
-            "id": "11",
-            "title": "Philly Smash",
-            "image": "http://www.seriouseats.com/recipes/assets_c/2012/07/201206-213781-seasonalcocktail-phillysmash-thumb-625xauto-255242.jpg",
-            "score": 5
-        },
-        {
-            "id": "12",
-            "title": "Kir Royale Sangria",
-            "image": "http://www.seriouseats.com/recipes/assets_c/2012/07/20120710KirRoyaleSangria-thumb-625xauto-255831.jpg",
-            "score": 5
-        },
-        {
-            "id": "13",
-            "title": "Braided Bread",
-            "image": "http://www.seriouseats.com/recipes/assets_c/2012/07/20120717-214279-bread-baking-braided-bread-thumb-625xauto-256207.jpg",
-            "score": 5
-        },
-        {
-            "id": "14",
-            "title": "Cuban Picadillo",
-            "image": "http://www.seriouseats.com/recipes/assets_c/2012/07/20120719-127677-LatAmCuisine-Picadillo-610x458-thumb-625xauto-257804.jpeg",
-            "score": 5
-        }
-    ]
-    rand = rd.sample(range(1, 15), 5)
-    return json.dumps({"recipes": [x for x in recipes if int(x['id']) in rand], "count": count})
+    # TODO: Replace correct recommender with limit and skip
+    rec = Recommender()
+    ids = rec.dummieRecommendation(limit)
+    recipes = mongo.db.recipes.find({"_id": {"$in": ids}})
+    result = []
+    for recipe in recipes:
+        recipe["_id"] = str(recipe["_id"])
+        rating = mongo.db.ratings.find({"recipe_id": ObjectId(recipe["_id"])}, {"rating": 1, "_id": 0})
+        rating = [int(x["rating"]) for x in rating]
+        rating = np.mean(rating) if rating else False
+        recipe["rating"] = rating
+        result.append(recipe)
+    return json.dumps({"recipes": result, "limit": limit})
 
 @app.route('/api/recipes/<recipe_id>', methods=['GET'])
 @cross_origin()
