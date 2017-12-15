@@ -24,8 +24,8 @@
             $.ajax({
                 url: ROOT+'api/recipes/',
                 data:JSON.stringify({"ingredients":$("#taglist").tagsinput('items'), "skip":$(".recipes").children("div").length}),
-                error: function() {
-                    alert("AJAX error");
+                error: function(e) {
+                    console.log(e);
                     $(".load-more .btn").html('Load More Recipes').removeAttr("disabled");
                 },
                 dataType: 'json',
@@ -58,8 +58,8 @@
             $.ajax({
                 url: ROOT+'api/recipes/',
                 data:JSON.stringify({"ingredients":$("#taglist").tagsinput('items')}),
-                error: function() {
-                    alert("AJAX error");
+                error: function(e) {
+                    console.log(e);
                 },
                 dataType: 'json',
                 success: function(data) {

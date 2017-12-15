@@ -6,7 +6,6 @@
         url: ROOT+'api/users/',
         crossDomain: true,
         error: function(a) {
-            alert("AJAX Error");
             console.log(a)
         },
         dataType: 'json',
@@ -45,7 +44,7 @@
                     url:ROOT+'api/users/',
                     crossDomain: true,
                     error: function (e) {
-                        alert("Ajax Error")
+                        console.log(e);
                     },
                     data:JSON.stringify(data),
                     dataType:'json',

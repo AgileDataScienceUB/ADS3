@@ -28,7 +28,7 @@
                 url:ROOT+'api/login/',
                 crossDomain: true,
                 error: function (e) {
-                    alert("Ajax Error")
+                    console.log(e);
                 },
                 data:JSON.stringify(data),
                 dataType:'json',

@@ -6,8 +6,7 @@
             url: ROOT+'api/users/',
             crossDomain: true,
             error: function(a) {
-                alert("AJAX Error");
-                console.log(a)
+                console.log(a);
             },
             dataType: 'json',
             success: function(data) {
@@ -26,7 +25,6 @@
                 url: ROOT+'api/logout/',
                 crossDomain: true,
                 error: function(a) {
-                    alert("AJAX Error");
                     console.log(a)
                 },
                 dataType: 'text',

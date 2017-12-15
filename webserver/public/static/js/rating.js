@@ -31,7 +31,6 @@
         },
         dataType: 'json',
         success: function(data) {
-            console.log(data);
             if(data._id !== undefined) {
                 user_id = data["_id"];
             }
@@ -50,7 +49,6 @@
             },
             dataType: 'json',
             success: function(data) {
-                console.log(data);
                 if(data._id !== undefined){
                     recipe_id = data["_id"];
                     replaceTitle(data['name']);

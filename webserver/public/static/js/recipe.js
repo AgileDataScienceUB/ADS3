@@ -99,7 +99,6 @@
             dataType: 'json',
             data:JSON.stringify({recipe_id:recipe_id}),
             success: function(data) {
-                console.log(data);
                 $.each(data['recipes'],function (idx) {
                     var item = data["recipes"][idx];
                     var html = generateOneRecipe(item['_id'], item['name'], item['image'], item['rating']);
@@ -116,12 +115,10 @@
         url: ROOT+'api/users/',
         crossDomain: true,
         error: function(a) {
-            alert("AJAX Error");
             console.log(a)
         },
         dataType: 'json',
         success: function(data) {
-            console.log(data);
             if(data._id !== undefined) {
                 user_id = data["_id"];
                 showUserRating();
@@ -140,7 +137,6 @@
             },
             dataType: 'json',
             success: function(data) {
-                console.log(data);
                 if(data._id !== undefined){
                     replaceDocumentTitle(data['name']);
                     replaceTitle(data['name']);
