@@ -5,7 +5,9 @@ FROM python:3-onbuild
 EXPOSE 5000
 
 # run the application
-CMD ["python", "./manage_server.py","runserver","-h","0.0.0.0"]
+CMD ["python", "public/app.py"]
 
-# Run the app.  CMD is required to run on Heroku            
+# Run the app.  CMD is required to run on Heroku      
+#CMD gunicorn public/app.wsgi --log-file -  
 #CMD gunicorn gettingstarted.wsgi --log-file -
+#CMD gunicorn -bind 0.0.0.0:5000 wsgi
