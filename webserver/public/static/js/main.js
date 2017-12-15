@@ -123,6 +123,10 @@
             }
         });
 
+        if($("#taglist").tagsinput('items').length > 0){
+            loadRecips();
+        }
+
         $('#typeahead').typeahead({
                 hint: true,
                 highlight: true,
