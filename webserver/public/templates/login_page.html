@@ -33,7 +33,7 @@
             </button>
 
             <div class="navbar-header">
-                <a class="navbar-brand hide-container" href="../">[Agile Recipe]</a>
+                <a class="navbar-brand" href="../">[Agile Recipe]</a>
             </div>
 
             <div class="collapse navbar-collapse navbar-right" id="navbar">
@@ -46,36 +46,35 @@
 	
     <div class="container" style="margin-top: 20%;">
         <div class="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
-            <div class="row">
-                <div id="logo" class="text-center">
-                    <h1>[Agile Recipe]</h1>
-				 </div>	
-				<div class="container"  style="padding: 16px;">
-                    <form href="#" method="POST" id="login-form">
-                        <label style="padding: 5px;"><b>Email Address: </b></label>
-
-                        <input class="form-control" style="width: 500px;" type="text" placeholder="Enter Email Address" name="email" id="email" required>
-                        <br>
-                        <label style="padding: 5px;"><b>Password: </b></label>
-
-                        <input class="form-control" style="width: 500px;" type="password" placeholder="Enter Password" name="password" id="password" required>
-                        <!--<input style="padding: 3px;" type="checkbox" checked="checked"> Remember me</input>-->
-                        <br>
-                        <br>
-                        <span style="padding: 3px;" class="psw">Forgot <a href="#">password?</a></span>
-
-                        <br>
-                        <div class="container" style="background-color:#f1f1f1; width: 500px; float:left">
-                            <button type="submit" class="btn btn-warning btn-lg" style="width: 150px; margin-left: 10px;">Login</button>
-                            <a href="../" class="btn btn-warning btn-lg" style="width: 150px; margin-left: 145px; "  id="cancel_btn" class="cancelbtn">Cancel</a>
+            <form id="login-form" class="form-horizontal">
+                <div class="row">
+                    <div class="form-group">
+                        <label for="email" class="col-sm-2 control-label">Email</label>
+                        <div class="col-sm-10">
+                            <input type="email" class="form-control" name="email" id="email" placeholder="Email">
                         </div>
-                    </form>
-				</div>
-				
-               	  
-			</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="password" class="col-sm-2 control-label">Password</label>
+                        <div class="col-sm-10">
+                            <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <button type="submit" class="btn btn-success btn-lg btn-block">Sign in</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
 		</div>
 	</div>
+
+    <footer class="footer">
+        <div class="container">
+            <span class="text-muted">Made with <span class="fa fa-heart" style="color: red;"></span> in <a target="_blank" href="http://www.ub.edu/datascience/">University of Barcelona</a></span>
+        </div>
+    </footer>
 
 </div>
   </body>
