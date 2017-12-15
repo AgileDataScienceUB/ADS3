@@ -421,14 +421,12 @@ def get_ingredients(query):
 @app.route('/api/recipes/', methods=['POST'])
 @cross_origin()
 def get_recipes():
-    """Receiving {"ingredients":[list], "count":[int]}"""
+    """Receiving {"ingredients":[list], "count":[int], "skip":[int]} or {"recipe_id":[id], "count":[int], "skip":[int]}"""
 
     jsonObj = json.loads(request.get_data())
 
-    if 'ingredients' not in jsonObj.keys():
-        return json.dumps({"error": "No ingredients received."}), 400
-
-    ingredients = [str(x).lower() for x in jsonObj['ingredients']]
+    if 'ingredients' not in jsonObj.keys() and 'recipe_id' not in jsonObj.keys():
+        return json.dumps({"error": "Data is not valid."}), 400
 
     if 'limit' not in jsonObj.keys():
         limit = 6
@@ -440,22 +438,43 @@ def get_recipes():
     else:
         skip = jsonObj['skip']
 
-    if type(jsonObj['ingredients']) != list or not jsonObj['ingredients']:
-        return json.dumps({"error": "Ingredients are not valid."}), 400
-
-    # TODO: Replace correct recommender with limit and skip
     rec = Recommender({'name': 'huang', 'password': 'chen1992', 'url': 'ds233895.mlab.com:33895', 'dbname': 'agile_data_science_group_3'})
-    ids = rec.searchRecepieByIngredients(ingredients, limit, skip)
-    recipes = mongo.db.recipes.find({"_id": {"$in": ids}})
-    result = []
-    for recipe in recipes:
-        recipe["_id"] = str(recipe["_id"])
-        rating = mongo.db.ratings.find({"recipe_id": ObjectId(recipe["_id"])}, {"rating": 1, "_id": 0})
-        rating = [int(x["rating"]) for x in rating]
-        rating = np.mean(rating) if rating else False
-        recipe["rating"] = rating
-        result.append(recipe)
-    return json.dumps({"recipes": result, "limit": limit})
+
+    if 'ingredients' in jsonObj.keys():
+        if type(jsonObj['ingredients']) != list or not jsonObj['ingredients']:
+            return json.dumps({"error": "Ingredients are not valid."}), 400
+
+        ingredients = [str(x).lower() for x in jsonObj['ingredients']]
+
+        ids = rec.searchRecepieByIngredients(ingredients, limit, skip)
+        recipes = mongo.db.recipes.find({"_id": {"$in": ids}})
+        result = []
+        for recipe in recipes:
+            recipe["_id"] = str(recipe["_id"])
+            rating = mongo.db.ratings.find({"recipe_id": ObjectId(recipe["_id"])}, {"rating": 1, "_id": 0})
+            rating = [int(x["rating"]) for x in rating]
+            rating = np.mean(rating) if rating else False
+            recipe["rating"] = rating
+            result.append(recipe)
+        return json.dumps({"recipes": result, "limit": limit})
+
+    if 'recipe_id' in jsonObj.keys():
+        if type(jsonObj['recipe_id']) != str:
+            return json.dumps({"error": "Recipe ID is not valid."}), 400
+
+        recipe_id = jsonObj['recipe_id']
+
+        ids = rec.bestRated(ObjectId(recipe_id), limit, skip)
+        recipes = mongo.db.recipes.find({"_id": {"$in": ids}})
+        result = []
+        for recipe in recipes:
+            recipe["_id"] = str(recipe["_id"])
+            rating = mongo.db.ratings.find({"recipe_id": ObjectId(recipe["_id"])}, {"rating": 1, "_id": 0})
+            rating = [int(x["rating"]) for x in rating]
+            rating = np.mean(rating) if rating else False
+            recipe["rating"] = rating
+            result.append(recipe)
+        return json.dumps({"recipes": result, "limit": limit})
 
 @app.route('/api/recipes/<recipe_id>', methods=['GET'])
 @cross_origin()
