@@ -372,13 +372,23 @@ def login_page():
 def register_page():
   return render_template('registration_page.html')
 
+@app.route('/rating/message/')
+def rate_message_page():
+    if 'user_id' not in session.keys():
+        return redirect(url_for('main_page'), code=302)
+
+    rating_counts = mongo.db.ratings.find({"user_id":ObjectId(session["user_id"])}).count()
+    if rating_counts > 4:
+        return redirect(url_for('main_page'), code=302)
+    else:
+        return render_template('rate_message_page.html')
+
 @app.route('/rating/')
 def rate_page():
     if 'user_id' not in session.keys():
         return redirect(url_for('main_page'), code=302)
 
     rating_counts = mongo.db.ratings.find({"user_id":ObjectId(session["user_id"])}).count()
-    print(rating_counts)
     if rating_counts > 4:
         return redirect(url_for('main_page'), code=302)
     else:
