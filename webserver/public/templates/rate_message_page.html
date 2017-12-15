@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
     <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script src="../../static/js/navbar_user.js"></script>
 </head>
 <body class="hide-container">
     <nav class="navbar navbar-default navbar-fixed-top navbar-toggleable-md bg-faded header">
@@ -26,14 +27,15 @@
             </button>
 
             <div class="navbar-header">
-                <a class="navbar-brand" href="../"><span class="fa fa-cutlery"></span> Agile Recipe</a>
-            </div>
-            <div class="collapse navbar-collapse navbar-right" id="navbar">
-                <ul class="nav navbar-nav">
-                    <li><a href="../login"> <i class="glyphicon glyphicon-log-in"></i> Sign in</a></li>
-                </ul>
+                <a class="navbar-brand" href="../../"><span class="fa fa-cutlery"></span> Agile Recipe</a>
             </div>
 
+            <div class="collapse navbar-collapse navbar-right" id="navbar">
+                <ul class="nav navbar-nav hide-container" id="navbar-user">
+                    <li><a href="#"> <i class="glyphicon glyphicon-user"></i> Welcome <span id="navbar-username">User</span></a></li>
+                    <li><a href="#" id="navbar-log-out"> <i class="glyphicon glyphicon-log-out"></i> Sign Out</a></li>
+                </ul>
+            </div>
 
         </div>
     </nav>
@@ -47,16 +49,16 @@
         <div class="row">
             <div class="col-lg-6 col-lg-offset-3 col-md-8 col-md-offset-2 col-sm-8 col-sm-offset-2">
                 <div class="alert alert-success" role="alert">
-                    <p><strong>Dear User.</strong></p><p>To be able to personalize your experience in this website, you will be redirected to a page in order to select 5 recipes as your favorites.</p><p>You can choose to do it later.</p>
+                    <p><strong>Dear <span id="user">User</span>.</strong></p><p>To be able to personalize your experience in this website, you will be redirected to a page in order to select 5 recipes as your favorites.</p><p>You can choose to do it later.</p>
                 </div>
             </div>
         </div>
         <div class="row">
             <div class="col-lg-4 col-lg-offset-3 col-md-5 col-md-offset-2 col-sm-8 col-sm-offset-2">
-                <a href="../" class="btn btn-success btn-lg btn-block">Personalize my experience</a>
+                <a href="../" class="btn btn-success btn-lg btn-block"><span class="fa fa-check"></span> Start the Process</a>
             </div>
             <div class="col-lg-2 col-lg-offset-0 col-md-3 col-md-offset-0 col-sm-8 col-sm-offset-2">
-                <a href="../../" class="btn btn-warning btn-lg btn-block">Not Now</a>
+                <a href="../../" class="btn btn-warning btn-lg btn-block"><span class="fa fa-times"></span> Not Now</a>
             </div>
         </div>
     </div>
