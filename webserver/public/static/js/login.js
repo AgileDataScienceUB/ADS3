@@ -38,7 +38,7 @@
                         $("#login-form")[0].reset();
                         $("input#email").focus()
                     }else{
-                        window.location.replace("../");
+                        window.location.replace("../rating/message/");
                     }
                 },
                 type: 'POST'
@@ -46,4 +46,4 @@
         })
     });
 
-})(jQuery, document, window)
+})(jQuery, document, window);
