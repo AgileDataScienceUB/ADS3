@@ -65,6 +65,52 @@
     function replaceDocumentTitle(title) {
         $("head title").text(title+" - Agile Recipe")
     }
+    function generateOneRecipe(id,title,image,rating){
+            var scores = '';
+
+            if(!rating){
+                scores = 'No Ratings. Be the first <span class="fa fa-check-square"></span>'
+            }else{
+                numberFull = Math.floor(rating);
+                numberHalf = Math.ceil(rating-numberFull);
+                numberEmpty = Math.floor(5-rating);
+
+                for(i=0;i<numberFull;i++){
+                    scores += '<span class="fa fa-star"></span> '
+                }
+                for(i=0;i<numberHalf;i++){
+                    scores += '<span class="fa fa-star-half-o"></span> '
+                }
+                for(i=0;i<numberEmpty;i++){
+                    scores += '<span class="fa fa-star-o"></span> '
+                }
+            }
+
+            var html = '<div class="recipe-container col-md-6 col-sm-12"> <a href="../../recipe/'+id+'"/"> <div class="panel panel-default"> <div class="panel-heading">'+title+'</div> <div class="panel-body" style="background: url('+image+') no-repeat center center; background-size: cover;"><span class="label label-warning label-lg"> '+scores+' </span> </div> </div> </a> </div>';
+            return html;
+        }
+    function loadRecomanded() {
+        $.ajax({
+            url: ROOT+'api/recipes/',
+            crossDomain: true,
+            error: function(a) {
+                console.log(a)
+            },
+            dataType: 'json',
+            data:JSON.stringify({recipe_id:recipe_id}),
+            success: function(data) {
+                console.log(data);
+                $.each(data['recipes'],function (idx) {
+                    var item = data["recipes"][idx];
+                    var html = generateOneRecipe(item['_id'], item['name'], item['image'], item['rating']);
+                    $(".recommended").append(html);
+                })
+            },
+            type: 'POST'
+        }).done(function () {
+            deactivateLoading();
+        });
+    }
 
     $.ajax({
         url: ROOT+'api/users/',
@@ -90,7 +136,6 @@
             url: ROOT+'api/recipes/'+recipe_id,
             crossDomain: true,
             error: function(a) {
-                alert("AJAX Error");
                 console.log(a)
             },
             dataType: 'json',
@@ -110,7 +155,7 @@
             type: 'GET'
         }).done(function () {
             showRecipe();
-            deactivateLoading();
+            loadRecomanded()
         });
 
         $('#user-rating button').on('click',function () {
@@ -119,7 +164,6 @@
                 url: ROOT+'api/recipe_score/'+recipe_id+'/',
                 crossDomain: true,
                 error: function(a) {
-                    alert("AJAX Error");
                     console.log(a)
                 },
                 dataType: 'json',
