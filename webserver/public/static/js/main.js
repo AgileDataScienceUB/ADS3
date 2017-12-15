@@ -1,4 +1,4 @@
-(function($){
+(function($, document, window){
     $(document).ready(function () {
 
         var ROOT = window.location.protocol+'//'+window.location.host+'/';
@@ -45,10 +45,20 @@
                 $(".load-more .btn").html('Load More Recipes').removeAttr("disabled");
             });
         }
+        function scrollHeight(){
+            var docViewTop = $(window).scrollTop();
+            var docViewBottom = docViewTop + $(window).height();
+
+            var elemTop = ($("#logo").offset().top)*1.1;
+            var elemBottom = (elemTop + $("#logo").height());
+
+            return docViewBottom - elemBottom
+        }
         function loadRecips() {
             hideMessage()
             ingredients = $("#taglist").tagsinput('items');
             if(ingredients.length < 1){
+                $("#main-container").animate({marginTop: "20%"}, "slow");
                 hideRecipes();
                 return false;
             }
@@ -75,6 +85,7 @@
                 },
                 type: 'POST'
             }).done(function () {
+                $("#main-container").animate({marginTop: "6%"}, "slow");
                 deactivateLoading();
                 showRecipes();
             });
@@ -164,4 +175,4 @@
         })
 
     })
-})(jQuery);
+})(jQuery, document, window);
