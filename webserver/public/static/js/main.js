@@ -1,7 +1,7 @@
 (function($){
     $(document).ready(function () {
 
-        var ROOT = 'http://0.0.0.0:5000/';
+        var ROOT = window.location.protocol+'//'+window.location.host+'/';
 
         function capitalizeFirstLetter(string) {
             return string.charAt(0).toUpperCase() + string.slice(1);
@@ -19,18 +19,24 @@
             $(".recipes-container").addClass("hide-container")
         }
         function loadMoreRecipes() {
+            hideMessage();
             $(".load-more .btn").html('<i class=\"fa fa-cog fa-spin fa-fw\" aria-hidden=\"true\"></i> Loading Data').attr("disabled","disabled");
             $.ajax({
-                url: API_URL+'api/recipes/',
-                data:JSON.stringify({"ingredients":$("#taglist").tagsinput('items')}),
-                error: function() {
-                    alert("AJAX error");
+                url: ROOT+'api/recipes/',
+                data:JSON.stringify({"ingredients":$("#taglist").tagsinput('items'), "skip":$(".recipes").children("div").length}),
+                error: function(e) {
+                    console.log(e);
+                    $(".load-more .btn").html('Load More Recipes').removeAttr("disabled");
                 },
                 dataType: 'json',
                 success: function(data) {
+                    if(data['recipes'].length == 0){
+                        showMessage("<strong>This is embarrassing!</strong> There are no more recipes matching your search.");
+                        return true;
+                    }
                     $.each(data['recipes'],function (idx) {
                         var item = data["recipes"][idx];
-                        var html = '<div class="col-lg-3 col-md-4 col-sm-6 recipe-container"><a href="#'+item["id"]+'"><div style="background: url('+item["image"]+') no-repeat center center; background-size: cover;"><div><h4 class="text-center">'+item['title']+'</h4></div></div></a></div>';
+                        var html = generateOneRecipe(item['_id'], item['name'], item['image'], item['rating']);
                         $(".recipes").append(html);
                     })
                 },
@@ -40,6 +46,7 @@
             });
         }
         function loadRecips() {
+            hideMessage()
             ingredients = $("#taglist").tagsinput('items');
             if(ingredients.length < 1){
                 hideRecipes();
@@ -51,14 +58,18 @@
             $.ajax({
                 url: ROOT+'api/recipes/',
                 data:JSON.stringify({"ingredients":$("#taglist").tagsinput('items')}),
-                error: function() {
-                    alert("AJAX error");
+                error: function(e) {
+                    console.log(e);
                 },
                 dataType: 'json',
                 success: function(data) {
+                    if(data['recipes'].length == 0){
+                        showMessage("<strong>This is embarrassing!</strong> We do not have what you are looking for but don't give up. There are lots of delicious recipes.");
+                        return true;
+                    }
                     $.each(data['recipes'],function (idx) {
                         var item = data["recipes"][idx];
-                        var html = '<div class="col-lg-3 col-md-4 col-sm-6 recipe-container"><a href="#'+item["id"]+'"><div style="background: url('+item["image"]+') no-repeat center center; background-size: cover;"><div><h4 class="text-center">'+item['title']+'</h4></div></div></a></div>';
+                        var html = generateOneRecipe(item['_id'], item['name'], item['image'], item['rating']);
                         $(".recipes").append(html);
                     })
                 },
@@ -68,32 +79,54 @@
                 showRecipes();
             });
         }
+        function generateOneRecipe(id,title,image,rating){
+            var scores = '';
 
-        var substringMatcher = function(strs) {
-            return function findMatches(q, cb) {
-                var matches, substringRegex;
+            if(!rating){
+                scores = 'No Ratings. Be the first <span class="fa fa-check-square"></span>'
+            }else{
+                numberFull = Math.floor(rating);
+                numberHalf = Math.ceil(rating-numberFull);
+                numberEmpty = Math.floor(5-rating);
 
-                // an array that will be populated with substring matches
-                matches = [];
+                for(i=0;i<numberFull;i++){
+                    scores += '<span class="fa fa-star"></span> '
+                }
+                for(i=0;i<numberHalf;i++){
+                    scores += '<span class="fa fa-star-half-o"></span> '
+                }
+                for(i=0;i<numberEmpty;i++){
+                    scores += '<span class="fa fa-star-o"></span> '
+                }
+            }
 
-                // regex used to determine if a string contains the substring `q`
-                substrRegex = new RegExp(q, 'i');
+            var html = '<div class="recipe-container col-md-6 col-sm-12"> <a href="recipe/'+id+'"/"> <div class="panel panel-default"> <div class="panel-heading">'+title+'</div> <div class="panel-body" style="background: url('+image+') no-repeat center center; background-size: cover;"><span class="label label-warning label-lg"> '+scores+' </span> </div> </div> </a> </div>';
+            return html;
+        }
+        function hideMessage() {
+            $(".load-more").removeClass("hide-container");
+            $("#recipe-end-message").addClass("hide-container");
+            $("#recipe-end-message .message").html("");
+        }
+        function showMessage(msg) {
+            $(".load-more").addClass("hide-container");
+            $("#recipe-end-message").removeClass("hide-container");
+            $("#recipe-end-message .message").html(msg);
+        }
 
-                // iterate through the pool of strings and for any string that
-                // contains the substring `q`, add it to the `matches` array
-                $.each(strs, function(i, str) {
-                    if (substrRegex.test(str)) {
-                        matches.push(capitalizeFirstLetter(str));
-                    }
-                });
+        var ingredients = new Bloodhound({
+            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+            queryTokenizer: Bloodhound.tokenizers.whitespace,
+            remote: {
+                url: ROOT+'api/ingredients/%QUERY/',
+                wildcard: '%QUERY'
+            }
+        });
 
-                cb(matches);
-            };
-        };
+        if($("#taglist").tagsinput('items').length > 0){
+            loadRecips();
+        }
 
-        var states = ['Eggs', 'Flour', 'Oil', 'Banana', 'Apple', 'Sugar', 'Bread', 'Oranges', 'lemon', 'chicken', 'vanilla', 'thyme', 'salmon', 'cashew', 'mangos', 'salt', 'pepper', 'olive', 'garlic', 'milk', 'Cream', 'tomatoe', 'rice', 'ginger', 'honey', 'corn', 'basil', 'mint', 'bacon', 'carrot'];
-
-        // TODO: find a better autocomplete plugin compatible with ajax
         $('#typeahead').typeahead({
                 hint: true,
                 highlight: true,
@@ -101,7 +134,7 @@
             },
             {
                 name: 'states',
-                source: substringMatcher(states) // CHANGE: load the list dynamically
+                source: ingredients // CHANGE: load the list dynamically
             });
 
         $("#ingredients-form").submit(function (e) {

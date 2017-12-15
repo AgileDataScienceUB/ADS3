@@ -1,12 +1,11 @@
 (function($, document, window) {
 
-  var ROOT = 'http://127.0.0.1:5000/';
+  var ROOT = window.location.protocol+'//'+window.location.host+'/';
 
     $.ajax({
         url: ROOT+'api/users/',
         crossDomain: true,
         error: function(a) {
-            alert("AJAX Error");
             console.log(a)
         },
         dataType: 'json',
@@ -45,7 +44,7 @@
                     url:ROOT+'api/users/',
                     crossDomain: true,
                     error: function (e) {
-                        alert("Ajax Error")
+                        console.log(e);
                     },
                     data:JSON.stringify(data),
                     dataType:'json',

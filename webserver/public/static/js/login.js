@@ -1,6 +1,6 @@
 (function($, document, window) {
 
-  var ROOT = 'http://127.0.0.1:5000/';
+  var ROOT = window.location.protocol+'//'+window.location.host+'/';
 
     $.ajax({
     url: ROOT+'api/users/',
@@ -28,7 +28,7 @@
                 url:ROOT+'api/login/',
                 crossDomain: true,
                 error: function (e) {
-                    alert("Ajax Error")
+                    console.log(e);
                 },
                 data:JSON.stringify(data),
                 dataType:'json',
@@ -38,7 +38,7 @@
                         $("#login-form")[0].reset();
                         $("input#email").focus()
                     }else{
-                        window.location.replace("../");
+                        window.location.replace("../rating/message/");
                     }
                 },
                 type: 'POST'
@@ -46,4 +46,4 @@
         })
     });
 
-})(jQuery, document, window)
+})(jQuery, document, window);

@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Main Page Template</title>
+    <title>Agile Recipe</title>
 
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
@@ -17,6 +17,7 @@
     <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <script src="static/js/typeahead.js"></script>
+    <script src="static/js/bloodhound.js"></script>
     <script src="static/js/bootstrap-tagsinput.min.js"></script>
     <script src="static/js/main.js"></script>
     <script src="static/js/logo.js"></script>
@@ -35,7 +36,7 @@
             </button>
 
             <div class="navbar-header">
-                <a class="navbar-brand hide-container" href="#">[MANDARIN]</a>
+                <a class="navbar-brand hide-container" href="#"><span class="fa fa-cutlery"></span> Agile Recipe</a>
             </div>
 
             <div class="collapse navbar-collapse navbar-right" id="navbar">
@@ -56,7 +57,7 @@
         <div class="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
             <div class="row">
                 <div id="logo" class="text-center">
-                    <h1>[MANDARIN]</h1>
+                    <h1><span class="fa fa-cutlery fa-2x"></span> Agile Recipe</h1>
                 </div>
                 <form role="form" id="ingredients-form">
                     <div class="form-group form-group form-group-lg">
@@ -89,13 +90,23 @@
     <div class="container recipes-container hide-container">
         <div class="row recipes">
 
-            <!-- <div class="col-lg-3 col-md-4 col-sm-6 recipe-container">
-                <a href="#"><div style="background: url('http://i.ndtvimg.com/i/2016-06/chinese-625_625x350_81466064119.jpg') no-repeat center center; background-size: cover;">
-                    <div>
-                        <h4 class="text-center">Recipe Name</h4>
+            <!-- Template for each box -->
+            <!--<div class="recipe-container col-md-6 col-sm-12">
+                <a href="recipe/1/">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">long long long long long long long long long long long RECIPE NAME</div>
+                      <div class="panel-body" style="background: url('https://hdwallsource.com/img/2014/6/food-wallpaper-5775-5940-hd-wallpapers.jpg') no-repeat center center; background-size: cover;">
+                          <span class="label label-warning label-lg">
+                              <span class="fa fa-star"></span>
+                              <span class="fa fa-star"></span>
+                              <span class="fa fa-star"></span>
+                              <span class="fa fa-star-half-o"></span>
+                              <span class="fa fa-star-o"></span>
+                          </span>
+                      </div>
                     </div>
-                </div></a>
-            </div> -->
+                </a>
+            </div>-->
 
         </div>
 
@@ -104,11 +115,17 @@
                 <button class="btn btn-block btn-default"> Load More Recipes</button>
             </div>
         </div>
+
+        <div class="row hide-container" id="recipe-end-message">
+            <div class="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
+                <div class="alert alert-danger message" role="alert"></div>
+            </div>
+        </div>
     </div>
 
     <footer class="footer">
         <div class="container">
-            <span class="text-muted">Place footer content here.</span>
+            <span class="text-muted">Made with <span class="fa fa-heart" style="color: red;"></span> in <a target="_blank" href="http://www.ub.edu/datascience/">University of Barcelona</a></span>
         </div>
     </footer>
 

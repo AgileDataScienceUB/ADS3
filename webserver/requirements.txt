@@ -4,3 +4,8 @@ Flask-Script
 Flask-PyMongo
 flask-cors
 WTForms
+numpy
+gunicorn
+pandas
+pymongo
+tqdm

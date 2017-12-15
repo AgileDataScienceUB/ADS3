@@ -1,13 +1,354 @@
+import numpy as np
+import pandas as pd
+import pymongo
+import bson
+from tqdm import tqdm
+from bson.objectid import ObjectId
+import operator
+from random import shuffle
 from flask import Flask, render_template
 from flask import request, redirect, url_for, abort, session
 import json
 from bson.objectid import ObjectId
 from flask_cors import CORS, cross_origin
-from .config import MONGO_DB_URI, DB
 import random as rd
 from flask_pymongo import PyMongo
 import hashlib
 import re
+import os
+
+DB = {
+    "username": "crawler",
+    "password": "crawlergroup3",
+    "name": "agile_data_science_group_3"
+}
+
+MONGO_DB_URI = "mongodb://{username}:{password}@ds233895.mlab.com:33895/{dbname}".format(
+    username=DB['username'],
+    password=DB['password'],
+    dbname=DB['name']
+)
+
+class MongoServer:
+    credentials = None
+    conn = None
+    db = None
+    collections = {}
+
+    def __init__(self, credentials, run=False, db_name="agile_data_science_group_3"):
+        if run:
+            if not self.connect2Mongo(credentials, db_name):
+                print("Connection to server Failed.")
+
+            if not self.connect2DataBase(db_name):
+                print("Connection Data Base Failed.")
+
+    """Rotine to connect to Mongo DB"""
+
+    def connect2Mongo(self, credentials, db):
+        try:
+            # use your database name, user and password here:
+            name, password, url, dbname = credentials['name'], credentials['password'], credentials['url'], credentials[
+                'dbname']
+            conn = pymongo.MongoClient("mongodb://{}:{}@{}/{}".format(name, password, url, dbname))
+            self.conn = conn
+            return True
+        except pymongo.errors.ConnectionFailure as e:
+            return False
+
+    """Routine to connect to a Data Base"""
+
+    def connect2DataBase(self, db_name="agile_data_science_group_3"):
+        try:
+            self.db = self.conn[db_name]
+            return True
+        except:
+            return False
+
+    """Return the available collections in a data base"""
+
+    def listOfCollections(self):
+        return self.db.collection_names()
+
+    """Donwload all the ollections from the data base"""
+
+    def getAllCollections(self):
+        collections = self.listOfCollections()
+        for col in collections:
+            self.getCollectionFromServer(col)
+        return True
+
+    """Routine to get one collection of the Data Base"""
+
+    # return the collection
+    def getCollectionFromServer(self, name_collection):
+        if name_collection in self.db.collection_names():
+            self.collections[name_collection] = self.db.get_collection(name_collection)
+            print("Collection ", name_collection, " Update in Local.")
+            return True
+        return False
+
+    """ Take the collection from the local copy"""
+
+    def getCollection(self, name_collection):
+        if not name_collection in self.collections:
+            if not self.getCollectionFromServer(name_collection):
+                return False
+        return self.collections[name_collection]
+
+    """ Gets all the items of the collection"""
+
+    def getItems(self, name_collection, N=None):
+        if not name_collection in self.collections:
+            if not self.getCollectionFromServer(name_collection):
+                return False
+        if N != None:
+            return [element for element in self.collections[name_collection].find().limit(N)]
+        else:
+            return [element for element in self.collections[name_collection].find()]
+
+    """Query in one Collection"""
+
+    def searchInCollection(self, name_collection, field, patro, N=None):
+        if N == None:
+            return [element for element in self.db.get_collection(name_collection).find({field: patro})]
+        else:
+            return [element for element in self.db.get_collection(name_collection).find({field: patro}).limit(N)]
+
+    """Query in all the Collections"""
+
+    def searchInDB(self, field, patro):
+        query = {}
+        for collection in self.db.collection_names():
+            query[collection] = [element for element in self.db.get_collection(collection).find({field: patro})]
+        return query
+
+    """Find one in the collection"""
+
+    def findOne(self, collection_name):
+        return self.db.get_collection(collection_name).find_one()
+
+    """Seach in collection with multiple querys"""
+
+    def searchWithMultiplyConditions(self, collection_name, _query, condition='$and', N=6, skip=0):
+        query = []
+        for item in self.db.get_collection(collection_name).find({condition: _query}).limit(N + skip):
+            query.append(item)
+        return query[skip:]
+
+    """Find N elements in one collection"""
+
+    def findNElement(self, collection_name, N):
+        query = []
+        for item in self.db.get_collection(collection_name).find().limit(N):
+            query.append(item)
+        return query
+
+    """Insert one element into collection"""
+
+    def insertInCollection(self, collection_name, item):
+        assert type(item) == dict, "Item must be a dictionary"
+        return self.db.get_collection(collection_name).insert_one(item)
+
+class Recommender:
+    def __init__(self, credentials):
+        # connect to mongo with MongoServer object
+        self.server = MongoServer(credentials, True)
+
+    """Dummie Recommender"""
+
+    def dummieRecommendation(self, N=10):
+        listObjectIds = []
+        for item in self.server.findNElement('recipes', 1000):
+            listObjectIds.append(item['_id'])
+        shuffle(listObjectIds)
+        return listObjectIds[:N]
+
+    """Method that check if the object is a ObjectId"""
+
+    def isObjectId(self, _id):
+        try:
+            # Do a query in a specific user collection
+            if not type(_id) == bson.objectid.ObjectId:
+                # creation of a objectID
+                if type(_id) == str:
+                    idUser = bson.objectid.ObjectId(_id)
+                else:
+                    return None
+            return _id
+        except:
+            return None
+
+    """Search user by idRecepie(ObjectId)"""
+
+    def searchRecepieWithIngredientsByIs(self, idRecepie):
+        idRecepie = self.isObjectId(idRecepie)
+        if idRecepie == None:
+            print("idRecepie is not a ObjectId")
+            return []
+
+        # Search the recepie
+        _collection = 'recipes_ingredients'
+        _field = '_id'  # ObjectId
+        _patro = idRecepie
+        query = self.server.searchInCollection(name_collection=_collection, field=_field, patro=_patro)[0]
+        # obtain the ingredients
+        return query, query.values()[1]
+
+    """Search user by idUser(ObjectId)"""
+
+    def searchUsersById(self, idUser):
+        idUser = self.isObjectId(idUser)
+        if idUser == None:
+            print("Id User is not a ObjectId")
+            return []
+
+        _collection = 'users'
+        _field = '_id'  # ObjectId
+        _patro = idUser
+        query = self.server.searchInCollection(name_collection=_collection, field=_field, patro=_patro)[0]
+
+        return query
+
+    """Method that compute a smaller matrix for BestRated"""
+
+    def computeRecommenderMatrixBestRated(self, idRecipe):
+        # look the ingredients used in the recipe
+        # look the recipe that use on of the ingridients
+        # compute Recommender Matrix
+        return None
+
+    """Method that compute a smaller matrix for collaborativeFiltering"""
+
+    def computeRecommenderMatrixCollaborativeFiltering(self, idUser, n=10):
+        m_ids = []
+        m_user = []
+
+        idUser = self.isObjectId(idUser)
+        if idUser == None:
+            print("Id User is not a ObjectId")
+            return []
+
+        # look for the ratings of the user
+        ratingsUser = self.server.searchInCollection(name_collection='ratings', field='user_id', patro=idUser, N=n)
+        if ratingsUser == []:
+            print("User has no ratings. Cold Start.")
+            return None
+        ratings = []
+        m_user.append(idUser)
+
+        # obtain ratings from the same recipes
+        for rating in tqdm(ratingsUser):
+            m_ids.append(rating['recipe_id'])
+            # search for more ratings in the same recipe
+            recipes = self.server.searchInCollection(name_collection='ratings', field='recipe_id',
+                                                     patro=rating['recipe_id'])
+
+            # acumulate the ratings
+            ratings += recipes
+
+            # look if objectId of recipe is in the list
+            for recipe in recipes:
+                if not recipe['recipe_id'] in m_ids:
+                    m_ids.append(recipe['recipe_id'])
+
+                if not recipe['user_id'] in m_user:
+                    m_user.append(recipe['user_id'])
+
+        # compute Recommender Matrix
+        matrix = pd.DataFrame(np.full((len(m_ids), len(m_user)), np.nan), index=m_ids, columns=m_user)
+        for rates in ratings:
+            matrix[rates['user_id']][rates['recipe_id']] = rates['rating']
+
+        return matrix
+
+    """Method that donwliad the matrix from ratings and generates this one"""
+
+    def generateRatingMatrix(self):
+        m_ids = set()
+        m_user = set()
+        ratings = self.server.getItems('ratings')
+        for item in ratings:
+            m_ids.add(item["recipe_id"])
+            m_user.add(item["user_id"])
+
+        matrix = pd.DataFrame(np.full((len(m_ids), len(m_user)), np.nan), index=m_ids, columns=m_user)
+        for rates in ratings:
+            matrix[rates['user_id']][rates['recipe_id']] = rates['rating']
+
+        return matrix
+
+    def computeRecomendation(self):
+        # Introduce here the distance function for each of the cases
+        # maybe it is necesary to separete the funciton in two
+        pass
+
+    """Recommender of Collaborative Filtering"""
+
+    def collaborativeFiltering(self, idUser, N=6, skip=0):
+        # take the ratings of the user
+        # with the recipes of the user, find which recepes we can generate
+        # generate the recommender matrix for user
+        # call the distance function
+        return self.server.searchInCollection('CollRecom', 'user_id', idUser, N=N + skip)[0]['recomendations'][
+               skip:skip + N]
+
+    """ Method that search in function of the ingredients"""
+    def searchRecepieByIngredients(self, listIngredients, N = 6, skip = 0):
+       query = []
+       for ingredient in listIngredients:
+           query.append({'ingredients':ingredient})
+
+       respons = self.server.searchWithMultiplyConditions('RecIng', query, N = N, condition ='$and', skip = skip)
+
+       if len(respons) == 0:
+           respons = self.server.searchWithMultiplyConditions('RecIng', query, N = N, condition ='$or', skip = skip)
+
+       if len(respons) > 0 and len(respons) < N:
+           respons += self.server.searchWithMultiplyConditions('RecIng', query, N = N - len(respons) , condition ='$or', skip = skip)
+
+
+       objectsIds = []
+       for recepie in respons:
+           objectsIds.append(recepie['recipe_id'])
+
+       return objectsIds
+
+    """ Return top n recipes by maximum mean rating. In case of draw, then by minimum standard deviation rating. """
+
+    def bestRatedWeb(self, n=10):
+        data = pd.DataFrame(self.server.getItems('ratings', N=2000))
+        # top rated
+        data["rating"] = data["rating"].astype(float)
+        recipe_rating_mean = data.groupby(['recipe_id'])['rating'].mean()
+        recipe_rating_std = data.groupby(['recipe_id'])['rating'].std()
+        recipe_rating = pd.concat([recipe_rating_mean, recipe_rating_std], axis=1)
+        recipe_rating.columns = ["mean", "std"]
+        recs = recipe_rating.sort_values(["mean", "std"], ascending=[0, 1])
+
+        return list(map(ObjectId, list(recs.index.values)[:int(n)]))
+
+    def distance_recipes(self, ing1, ing2):
+        rec1 = set(ing1)
+        rec2 = set(ing2)
+        d = len(rec1.intersection(rec2)) / len(rec1)
+        if d == 1.0:
+            return 0
+        return d
+
+    """Recommender based on content"""
+
+    def bestRated(self, idRecepie, N=6, skip=0):
+        recipes_dict = self.server.getItems('RecIng', N=2000)
+        ingridents = self.server.searchInCollection('RecIng', 'recipe_id', idRecepie)[0]['ingredients']
+
+        dis = dict()
+        for rec in recipes_dict:
+            dis[rec['recipe_id']] = self.distance_recipes(ingridents, rec['ingredients'])
+
+        df_return = sorted(dis.items(), key=operator.itemgetter(1), reverse=True)[skip:N + skip]
+
+        return [obj for obj, rat in df_return]
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -31,9 +372,31 @@ def login_page():
 def register_page():
   return render_template('registration_page.html')
 
+@app.route('/rating/message/')
+def rate_message_page():
+    if 'user_id' not in session.keys():
+        return redirect(url_for('main_page'), code=302)
+
+    rating_counts = mongo.db.ratings.find({"user_id":ObjectId(session["user_id"])}).count()
+    if rating_counts > 4:
+        return redirect(url_for('main_page'), code=302)
+    else:
+        return render_template('rate_message_page.html')
+
+@app.route('/rating/')
+def rate_page():
+    if 'user_id' not in session.keys():
+        return redirect(url_for('main_page'), code=302)
+
+    rating_counts = mongo.db.ratings.find({"user_id":ObjectId(session["user_id"])}).count()
+    if rating_counts > 4:
+        return redirect(url_for('main_page'), code=302)
+    else:
+        return render_template('rate_page.html')
+
 @app.route('/recipe/<recipe_id>/')
 def recipe_page(recipe_id):
-  return 'Recipe page with id : {0}'.format(recipe_id)
+  return render_template('recipe_page.html')
 
 #
 # API
@@ -42,126 +405,145 @@ def recipe_page(recipe_id):
 @app.route('/api/')
 @cross_origin()
 def api_main_page():
-  return 'Initial API root'
+  return 'API root'
 
-@app.route('/api/ingredients/', methods=['POST'])
+@app.route('/api/ingredients/<query>/', methods=['GET'])
 @cross_origin()
-def get_ingredients():
-    """Receiving {"query":"[characters]"}"""
-    jsonObj = json.loads(request.get_data())
+def get_ingredients(query):
 
-    if 'query' not in jsonObj.keys():
-        return json.dumps({"error": "No Queries received."}), 400
-    if not jsonObj['query']:
-        return json.dumps({"error": "Query is not valid."}), 400
+    query = str(query).strip().lower()
 
-    query = str(jsonObj['query']).strip().lower()
+    ingredients = mongo.db.ingredients.find({"Ingredient": {"$regex": "^"+query}}, {"Ingredient": 1}).limit(10)
+    ingredients = [x["Ingredient"] for x in ingredients]
 
-    ingredients = ['Eggs1', 'Eggs3', 'Eggs2', 'Flour', 'Oil', 'Banana', 'Apple', 'Sugar', 'Bread', 'Oranges'] # TODO: Load complete list of ingredient
-    ingredients = [x for x in ingredients if str(x).lower().find(query) > -1]
+    return json.dumps(ingredients)
 
-    return json.dumps({"ingredients": ingredients})
-
-@app.route('/api/recipes/', methods=['post'])
+@app.route('/api/recipes/', methods=['POST'])
 @cross_origin()
 def get_recipes():
-    """Receiving {"ingredients":[list], "count":[int]}"""
+    """Receiving {"ingredients":[list], "count":[int], "skip":[int]} or {"recipe_id":[id], "count":[int], "skip":[int]}"""
 
     jsonObj = json.loads(request.get_data())
 
-    if 'ingredients' not in jsonObj.keys():
-        return json.dumps({"error": "No ingredients received."}), 400
+    if 'ingredients' not in jsonObj.keys() and 'recipe_id' not in jsonObj.keys():
+        return json.dumps({"error": "Data is not valid."}), 400
 
-    ingredients = jsonObj['ingredients']
-
-    if 'count' not in jsonObj.keys():
-        count = 5
+    if 'limit' not in jsonObj.keys():
+        limit = 6
     else:
-        count = jsonObj['count']
+        limit = jsonObj['limit']
 
-    if type(jsonObj['ingredients']) != list or not jsonObj['ingredients']:
-        return json.dumps({"error": "Ingredients are not valid."}), 400
+    if 'skip' not in jsonObj.keys():
+        skip = 0
+    else:
+        skip = jsonObj['skip']
 
+    rec = Recommender({'name': 'huang', 'password': 'chen1992', 'url': 'ds233895.mlab.com:33895', 'dbname': 'agile_data_science_group_3'})
 
-    #
-    #   Dummy Recipes
-    #
-    recipes = [
-        {
-            "id": "1",
-            "title": "Grilled Cubanos",
-            "image": "http://www.seriouseats.com/recipes/assets_c/2010/06/20100603-cubano-large-thumb-625xauto-93006.jpg"
-        },
-        {
-            "id": "2",
-            "title": "Cornish Pasty",
-            "image": "http://www.seriouseats.com/recipes/assets_c/2012/01/01212012-188504-sunday-brunch-cornish-pasty-primary-thumb-625xauto-213242.jpg"
-        },
-        {
-            "id": "3",
-            "title": "Tomato Avgolemono Soup",
-            "image": "http://www.seriouseats.com/recipes/assets_c/2012/02/20120214-seriousentertaining-soupson-tomatoavegolemenosoup-thumb-625xauto-219164.jpg"
-        },
-        {
-            "id": "4",
-            "title": "Cioppino",
-            "image": "http://www.seriouseats.com/recipes/assets_c/2012/02/02182012-193155-sunday-supper-cioppino-primary-thumb-625xauto-219621.jpg"
-        },
-        {
-            "id": "5",
-            "title": "Steak Taco Salad",
-            "image": "http://www.seriouseats.com/recipes/assets_c/2012/02/20120216-193359-dinner-tonight-steak-taco-salad-primary-thumb-625xauto-219875.jpg"
-        },
-        {
-            "id": "6",
-            "title": "Oyakodon",
-            "image": "http://www.seriouseats.com/recipes/assets_c/2012/02/20120219oyakodonlow610-thumb-625xauto-220819.jpg"
-        },
-        {
-            "id": "7",
-            "title": "Oyakodon",
-            "image": "http://www.seriouseats.com/recipes/assets_c/2012/02/20120219oyakodonlow610-thumb-625xauto-220819.jpg"
-        },
-        {
-            "id": "8",
-            "title": "Raspberry Limeade",
-            "image": "http://www.seriouseats.com/recipes/assets_c/2012/06/20120618-lemonade-variations-03-thumb-625xauto-250111.jpg"
-        },
-        {
-            "id": "9",
-            "title": "Campari Flamingo",
-            "image": "http://www.seriouseats.com/recipes/assets_c/2012/06/20120621-campari-flamingo-cocktail-primary-thumb-625xauto-251384.jpg"
-        },
-        {
-            "id": "10",
-            "title": "Watermelon Cake",
-            "image": "http://www.seriouseats.com/recipes/assets_c/2012/07/20120709-213358-watermeloncake-thumb-625xauto-254470.jpg"
-        },
-        {
-            "id": "11",
-            "title": "Philly Smash",
-            "image": "http://www.seriouseats.com/recipes/assets_c/2012/07/201206-213781-seasonalcocktail-phillysmash-thumb-625xauto-255242.jpg"
-        },
-        {
-            "id": "12",
-            "title": "Kir Royale Sangria",
-            "image": "http://www.seriouseats.com/recipes/assets_c/2012/07/20120710KirRoyaleSangria-thumb-625xauto-255831.jpg"
-        },
-        {
-            "id": "13",
-            "title": "Braided Bread",
-            "image": "http://www.seriouseats.com/recipes/assets_c/2012/07/20120717-214279-bread-baking-braided-bread-thumb-625xauto-256207.jpg"
-        },
-        {
-            "id": "14",
-            "title": "Cuban Picadillo",
-            "image": "http://www.seriouseats.com/recipes/assets_c/2012/07/20120719-127677-LatAmCuisine-Picadillo-610x458-thumb-625xauto-257804.jpeg"
-        }
-    ]
-    rand = rd.sample(range(1, 15), 5)
-    return json.dumps({"recipes": [x for x in recipes if int(x['id']) in rand], "count": count})
+    if 'ingredients' in jsonObj.keys():
+        if type(jsonObj['ingredients']) != list or not jsonObj['ingredients']:
+            return json.dumps({"error": "Ingredients are not valid."}), 400
 
-@app.route('/api/users/', methods=['post','get'])
+        ingredients = [str(x).lower() for x in jsonObj['ingredients']]
+
+        ids = rec.searchRecepieByIngredients(ingredients, limit, skip)
+        recipes = mongo.db.recipes.find({"_id": {"$in": ids}})
+        result = []
+        for recipe in recipes:
+            recipe["_id"] = str(recipe["_id"])
+            rating = mongo.db.ratings.find({"recipe_id": ObjectId(recipe["_id"])}, {"rating": 1, "_id": 0})
+            rating = [int(x["rating"]) for x in rating]
+            rating = np.mean(rating) if rating else False
+            recipe["rating"] = rating
+            result.append(recipe)
+        return json.dumps({"recipes": result, "limit": limit})
+
+    if 'recipe_id' in jsonObj.keys():
+        if type(jsonObj['recipe_id']) != str:
+            return json.dumps({"error": "Recipe ID is not valid."}), 400
+
+        recipe_id = jsonObj['recipe_id']
+
+        ids = rec.bestRated(ObjectId(recipe_id), limit, skip)
+        recipes = mongo.db.recipes.find({"_id": {"$in": ids}})
+        result = []
+        for recipe in recipes:
+            recipe["_id"] = str(recipe["_id"])
+            rating = mongo.db.ratings.find({"recipe_id": ObjectId(recipe["_id"])}, {"rating": 1, "_id": 0})
+            rating = [int(x["rating"]) for x in rating]
+            rating = np.mean(rating) if rating else False
+            recipe["rating"] = rating
+            result.append(recipe)
+        return json.dumps({"recipes": result, "limit": limit})
+
+@app.route('/api/recipes/<recipe_id>', methods=['GET'])
+@cross_origin()
+def get_recipe(recipe_id):
+
+    # data = mongo.db.recipes.find().limit(50)
+    # data = [str(x["_id"]) for x in data]
+    # return json.dumps(data)
+
+    if len(recipe_id) != 24:
+        return json.dumps({"error": "Data structure is not correct."}), 400
+
+    data = mongo.db.recipes.find_one({"_id": ObjectId(recipe_id)}, {"_id": 0})
+
+    if not data:
+        return json.dumps({"error": "Recipe Not Found"})
+
+    rating = mongo.db.ratings.find({"recipe_id": ObjectId(recipe_id)}, {"rating": 1, "_id": 0})
+    rating = [int(x["rating"]) for x in rating]
+    rating = np.mean(rating) if rating else False
+    data["rating"] = rating
+
+    if 'user_id' in session.keys():
+        rating = mongo.db.ratings.find_one({"recipe_id": ObjectId(recipe_id), "user_id": ObjectId(session["user_id"])}, {"rating": 1, "_id": 0})
+        data["user_rating"] = int(rating["rating"]) if rating else False
+    else:
+        data["user_rating"] = False
+
+    data["_id"] = recipe_id
+    return json.dumps(data)
+
+@app.route('/api/random_recipe/', methods=['GET'])
+@cross_origin()
+def random_recipe():
+
+    data = mongo.db.recipes.aggregate([ { "$sample": { "size": 1 } } ])
+    for item in data:
+        data = item
+        data['_id'] = str(data["_id"])
+
+    rating = mongo.db.ratings.find({"recipe_id": ObjectId(data["_id"])}, {"rating": 1, "_id": 0})
+    rating = [int(x["rating"]) for x in rating]
+    rating = np.mean(rating) if rating else False
+    data["rating"] = rating
+
+    return json.dumps(data)
+
+@app.route('/api/recipe_score/<recipe_id>/', methods=['POST'])
+@cross_origin()
+def update_score(recipe_id):
+    """Receiving {"rating":"[score]"}"""
+    jsonObj = json.loads(request.get_data())
+
+    if len(recipe_id) != 24:
+        return json.dumps({"error": "Data structure is not correct."}), 400
+
+    if 'rating' not in jsonObj.keys():
+        return json.dumps({"error": "Data structure is not correct."}), 400
+
+    if 'user_id' not in session.keys():
+        return json.dumps({"error": "No active users."})
+
+    mongo.db.ratings.update({"recipe_id": ObjectId(recipe_id), "user_id": ObjectId(session["user_id"])},
+                                   {"recipe_id": ObjectId(recipe_id), "user_id": ObjectId(session["user_id"]), "rating": jsonObj["rating"], },
+                                   upsert=True)
+
+    return redirect(url_for('get_recipe', recipe_id=recipe_id), code=302)
+
+@app.route('/api/users/', methods=['POST','GET'])
 @cross_origin()
 def active_user():
     """Receiving {"user_name":"[username]", "password":"[sha1_hashed_value]", "email":"[valid_email_address]"}"""
@@ -206,11 +588,11 @@ def get_user_data(user_id):
         return json.dumps({"error": "Data structure is not correct."}), 400
     user = mongo.db.users.find_one({"_id": ObjectId(user_id)}, {"email": 1, "user_name": 1, "_id": 0})
     if not user:
-        return json.dumps({"error": "User Not Found"}), 404
+        return json.dumps({"error": "User Not Found"})
     user["_id"] = user_id
     return json.dumps(user)
 
-@app.route('/api/login/', methods=['post'])
+@app.route('/api/login/', methods=['POST'])
 @cross_origin()
 def login_user():
     if 'user_id' in session.keys():
@@ -243,3 +625,7 @@ def login_user():
 def logout_user():
     session.pop('user_id', None)
     return "success"
+
+if __name__=='__main__':
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)

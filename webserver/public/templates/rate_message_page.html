@@ -5,15 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Registration - Agile Recipe</title>
+    <title>Personalization - Agile Recipe</title>
 
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
-    <link rel="stylesheet" href="../static/css/stickyfooter.css"/>
+    <link rel="stylesheet" href="../../static/css/stickyfooter.css"/>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
     <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-    <script src="../static/js/registration.js"></script>
 </head>
 <body class="hide-container">
     <nav class="navbar navbar-default navbar-fixed-top navbar-toggleable-md bg-faded header">
@@ -42,43 +41,24 @@
     <div class="container recipe-container" style="margin-top: 15%;">
         <div class="row text-center">
             <div class="col-md-10 col-md-offset-1 col-xs-12">
-                <h1 id="title">Registration</h1>
+                <h1 id="title">Personalizing Your Experience</h1>
             </div>
         </div>
-        <form id="register-form">
-            <div class="row">
-                <div class="col-lg-6 col-lg-offset-3 col-md-8 col-md-offset-2 col-sm-8 col-sm-offset-2">
-                    <div class="form-group">
-                        <label for="username">Username: </label><br>
-                        <input type="text" class="form-control" id="username" name="username" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="email">Email: </label><br>
-                        <input type="text" class="form-control" id="email" name="email" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="re-email">Repeat Email: </label><br>
-                        <input type="text" class="form-control" id="re-email" name="re-email" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="password">Repeat Email: </label><br>
-                        <input type="password" class="form-control" id="password" name="password" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="re-password">Repeat Email: </label><br>
-                        <input type="password" class="form-control" id="re-password" name="re-password" required>
-                    </div>
+        <div class="row">
+            <div class="col-lg-6 col-lg-offset-3 col-md-8 col-md-offset-2 col-sm-8 col-sm-offset-2">
+                <div class="alert alert-success" role="alert">
+                    <p><strong>Dear User.</strong></p><p>To be able to personalize your experience in this website, you will be redirected to a page in order to select 5 recipes as your favorites.</p><p>You can choose to do it later.</p>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-lg-4 col-lg-offset-3 col-md-6 col-md-offset-2 col-sm-4 col-sm-offset-2 col-xs-12">
-                    <button type="submit" class="btn btn-block btn-lg btn-success"><span class="fa fa-user-plus"></span> Register</button>
-                </div>
-                <div class="col-lg-2 col-md-2 col-sm-4 col-xs-12">
-                    <a href="../" class="btn btn-block btn-lg btn-warning"><span class="fa fa-times"></span> Cancel</a>
-                </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-4 col-lg-offset-3 col-md-5 col-md-offset-2 col-sm-8 col-sm-offset-2">
+                <a href="../" class="btn btn-success btn-lg btn-block">Personalize my experience</a>
             </div>
-        </form>
+            <div class="col-lg-2 col-lg-offset-0 col-md-3 col-md-offset-0 col-sm-8 col-sm-offset-2">
+                <a href="../../" class="btn btn-warning btn-lg btn-block">Not Now</a>
+            </div>
+        </div>
     </div>
 
     <footer class="footer">

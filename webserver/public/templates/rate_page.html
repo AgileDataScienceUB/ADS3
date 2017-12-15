@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+
+    <title>Personalization - Agile Recipe</title>
+
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <link rel="stylesheet" href="../static/css/stickyfooter.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="../static/css/main.css"/>
+    <style>
+
+    </style>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script src="../static/js/navbar_user.js"></script>
+    <script src="../static/js/rating.js"></script>
+    <script></script>
+</head>
+<body>
+
+    <nav class="navbar navbar-default navbar-fixed-top navbar-toggleable-md bg-faded header">
+        <div class="container-fluid">
+
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+            <div class="navbar-header">
+                <a class="navbar-brand" href="../"><span class="fa fa-cutlery"></span> Agile Recipe</a>
+            </div>
+
+            <div class="collapse navbar-collapse navbar-right" id="navbar">
+                <ul class="nav navbar-nav hide-container" id="navbar-user">
+                    <li><a href="#"> <i class="glyphicon glyphicon-user"></i> Welcome <span id="navbar-username">User</span></a></li>
+                    <li><a href="#" id="navbar-log-out"> <i class="glyphicon glyphicon-log-out"></i> Sign Out</a></li>
+                </ul>
+            </div>
+
+        </div>
+    </nav>
+
+    <div class="container recipe-container hide-container" style="margin-top: 15%;">
+        <div class="row text-center">
+            <div class="col-md-10 col-md-offset-1 col-xs-12">
+                <h1 id="title">TITLE</h1>
+            </div>
+        </div>
+        <div class="row text-center">
+            <div class="col-lg-2 col-lg-offset-4 col-md-2 col-md-offset-4 col-sm-3 col-sm-offset-3">
+                <button class="btn btn-success btn-lg btn-block" id="rate"><span class="fa fa-check"></span> Like it</button>
+            </div>
+            <div class="col-lg-2 col-md-2 col-sm-3">
+                <button class="btn btn-danger btn-lg btn-block" id="next"><span class="fa fa-arrow-right"></span> Next</button>
+            </div>
+        </div>
+        <div class="row text-center">
+            <div class="col-md-10 col-md-offset-1 col-sm-12">
+                <img class="img-thumbnail" id="image" src=""/>
+            </div>
+        </div>
+        <div class="row text-center">
+            <div class="col-md-10 col-md-offset-1">
+                <h3>Ingredients:</h3>
+                <ul class="list-group" id="ingredients">
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="container hide-container">
+        <div class="row text-center">
+            <h3>Recommended for you</h3>
+        </div>
+        <div class="row recommended">
+
+            <div class="recipe-container col-md-6 col-sm-12">
+                <a href="recipe/1/">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">long long long long long long long long long long long RECIPE NAME</div>
+                      <div class="panel-body" style="background: url('https://hdwallsource.com/img/2014/6/food-wallpaper-5775-5940-hd-wallpapers.jpg') no-repeat center center; background-size: cover;">
+                          <span class="label label-warning label-lg">
+                              <span class="fa fa-star"></span>
+                              <span class="fa fa-star"></span>
+                              <span class="fa fa-star"></span>
+                              <span class="fa fa-star-half-o"></span>
+                              <span class="fa fa-star-o"></span>
+                          </span>
+                      </div>
+                    </div>
+                </a>
+            </div>
+
+            <div class="recipe-container col-md-6 col-sm-12">
+                <a href="recipe/1/">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">long long long long long long long long long long long RECIPE NAME</div>
+                      <div class="panel-body" style="background: url('https://hdwallsource.com/img/2014/6/food-wallpaper-5775-5940-hd-wallpapers.jpg') no-repeat center center; background-size: cover;">
+                          <span class="label label-warning label-lg">
+                              <span class="fa fa-star"></span>
+                              <span class="fa fa-star"></span>
+                              <span class="fa fa-star"></span>
+                              <span class="fa fa-star-half-o"></span>
+                              <span class="fa fa-star-o"></span>
+                          </span>
+                      </div>
+                    </div>
+                </a>
+            </div>
+
+            <div class="recipe-container col-md-6 col-sm-12">
+                <a href="recipe/1/">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">long long long long long long long long long long long RECIPE NAME</div>
+                      <div class="panel-body" style="background: url('https://hdwallsource.com/img/2014/6/food-wallpaper-5775-5940-hd-wallpapers.jpg') no-repeat center center; background-size: cover;">
+                          <span class="label label-warning label-lg">
+                              <span class="fa fa-star"></span>
+                              <span class="fa fa-star"></span>
+                              <span class="fa fa-star"></span>
+                              <span class="fa fa-star-half-o"></span>
+                              <span class="fa fa-star-o"></span>
+                          </span>
+                      </div>
+                    </div>
+                </a>
+            </div>
+
+            <div class="recipe-container col-md-6 col-sm-12">
+                <a href="recipe/1/">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">long long long long long long long long long long long RECIPE NAME</div>
+                      <div class="panel-body" style="background: url('https://hdwallsource.com/img/2014/6/food-wallpaper-5775-5940-hd-wallpapers.jpg') no-repeat center center; background-size: cover;">
+                          <span class="label label-warning label-lg">
+                              <span class="fa fa-star"></span>
+                              <span class="fa fa-star"></span>
+                              <span class="fa fa-star"></span>
+                              <span class="fa fa-star-half-o"></span>
+                              <span class="fa fa-star-o"></span>
+                          </span>
+                      </div>
+                    </div>
+                </a>
+            </div>
+
+            <div class="recipe-container col-md-6 col-sm-12">
+                <a href="recipe/1/">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">long long long long long long long long long long long RECIPE NAME</div>
+                      <div class="panel-body" style="background: url('https://hdwallsource.com/img/2014/6/food-wallpaper-5775-5940-hd-wallpapers.jpg') no-repeat center center; background-size: cover;">
+                          <span class="label label-warning label-lg">
+                              <span class="fa fa-star"></span>
+                              <span class="fa fa-star"></span>
+                              <span class="fa fa-star"></span>
+                              <span class="fa fa-star-half-o"></span>
+                              <span class="fa fa-star-o"></span>
+                          </span>
+                      </div>
+                    </div>
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row text-center loading" style="margin-top: 15%;">
+            <i class="fa fa-cog fa-5x fa-spin fa-fw" aria-hidden="true"></i>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <span class="text-muted">Made with <span class="fa fa-heart" style="color: red;"></span> in <a target="_blank" href="http://www.ub.edu/datascience/">University of Barcelona</a></span>
+        </div>
+    </footer>
+
+</body>
+</html>
