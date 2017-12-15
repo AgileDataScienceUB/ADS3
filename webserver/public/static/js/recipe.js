@@ -62,6 +62,9 @@
         $('#user-rating button:contains('+score+')').addClass("btn-success")
         $('#user-rating :not(button:contains('+score+'))').removeClass("btn-success")
     }
+    function replaceDocumentTitle(title) {
+        $("head title").text(title+" - Agile Recipe")
+    }
 
     $.ajax({
         url: ROOT+'api/users/',
@@ -94,6 +97,7 @@
             success: function(data) {
                 console.log(data);
                 if(data._id !== undefined){
+                    replaceDocumentTitle(data['name']);
                     replaceTitle(data['name']);
                     replaceImage(data['image']);
                     replaceIngredients(data['list_ingredients']);
